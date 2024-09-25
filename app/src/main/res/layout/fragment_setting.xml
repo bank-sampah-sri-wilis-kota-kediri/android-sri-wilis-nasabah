@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.setting.SettingFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@color/blue_primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_settings_title"
+            android:textSize="25sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter_extra_bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="25dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/cl_appbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_settings_page_title1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_extra_bold"
+                android:text="@string/tv_settings_page_title1"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_profile"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_settings_page_title1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/ic_profile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/ic_profile"/>
+
+                <TextView
+                    android:id="@+id/tv_settings_title1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_settings_subtitle1"
+                    android:fontFamily="@font/inter_extra_bold"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/tv_settings_subtitle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_settings_subtitle1_desc"
+                    android:fontFamily="@font/inter_regular"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginTop="10dp"/>
+
+                <ImageView
+                    android:id="@+id/ic_arrow_next_settings"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_arrow_settings"
+                    android:layout_marginEnd="12dp"
+                    android:layout_gravity="end|center"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Change Password CardView -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_change_password"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/cv_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/ic_password"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/ic_change_password"/>
+
+                <TextView
+                    android:id="@+id/tv_settings_title2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_settings_subtitle2"
+                    android:fontFamily="@font/inter_extra_bold"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/tv_settings_subtitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_settings_subtitle2_desc"
+                    android:fontFamily="@font/inter_regular"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginTop="10dp"/>
+
+                <ImageView
+                    android:id="@+id/ic_arrow_next_settings2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_arrow_settings"
+                    android:layout_marginEnd="12dp"
+                    android:layout_gravity="end|center"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Reports CardView -->
+
+            <TextView
+                android:id="@+id/tv_settings_page_title2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_extra_bold"
+                android:text="@string/tv_settings_page_title2"
+                android:textSize="17sp"
+                android:layout_marginTop="12dp"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cv_change_password" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_term_and_conditions"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_settings_page_title2">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/ic_tnc" />
+
+                <TextView
+                    android:id="@+id/tv_settings_title5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/inter_extra_bold"
+                    android:text="@string/tv_settings_subtitle5" />
+
+                <TextView
+                    android:id="@+id/tv_settings_subtitle5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/tv_settings_subtitle5_desc" />
+
+                <ImageView
+                    android:id="@+id/ic_arrow_next_settings5"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="end|center"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_arrow_settings" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_logout"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cv_term_and_conditions"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="20dp">
+
+                <ImageView
+                    android:id="@+id/ic_logout"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/ic_logout" />
+
+                <TextView
+                    android:id="@+id/tv_settings_title6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/inter_extra_bold"
+                    android:text="@string/tv_settings_subtitle6" />
+
+                <TextView
+                    android:id="@+id/tv_settings_subtitle6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/tv_settings_subtitle6_desc" />
+
+                <ImageView
+                    android:id="@+id/ic_arrow_next_settings6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="end|center"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_arrow_settings"
+                    />
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
