@@ -1,0 +1,150 @@
+<resources>
+    <!-- Text View  -->
+    <string name="app_name">Bank Sampah Sri Wilis Pengguna</string>
+    <string name="tv_title_splashscreen1">Sampah Jadi Rupiah</string>
+    <string name="tv_title_splashscreen2">Transaksi Mudah</string>
+    <string name="tv_title_splashscreen3">Proses Realtime</string>
+    <string name="tv_splashscreen1_desc">Ubah sampah jadi rupiah dengan cepat, aman, dan transparan hanya dengan beberapa klik</string>
+    <string name="tv_splashscreen2_desc">Mencatat dan mengelola transaksi penjualan sampah menjadi lebih sederhana dan efisien</string>
+    <string name="tv_splashscreen3_desc">Dapatkan laporan pemesanan dan laporan keuangan secara real-time.</string>
+    <string name="tv_title_login">Masuk Akun Nasabah</string>
+    <string name="tv_title_register">Daftar Akun Nasabah</string>
+    <string name="tv_title_form_email">Email</string>
+    <string name="tv_title_form_password">Sandi</string>
+    <string name="tv_register_account_name_title">Nama Nasabah</string>
+    <string name="tv_register_account_name_hint">Masukkan Nama Anda</string>
+    <string name="tv_register_account_email_title">Email</string>
+    <string name="tv_register_account_email_hint">nama@email.com</string>
+    <string name="tv_register_account_mobile_number_title">No Handphone</string>
+    <string name="tv_register_account_mobile_number_hint">Masukkan Nomor HP Anda</string>
+    <string name="tv_register_account_sandi_title">Sandi</string>
+    <string name="tv_register_account_confirmation_sandi_title">Konfirmasi Sandi</string>
+    <string name="tv_register_account_sandi_hint">Masukkan Sandi Anda</string>
+    <string name="tv_register_account_confirmation_sandi__hint">Konfirmasi Sandi Anda</string>
+    <string name="tv_homepage_order">Password</string>
+    <string name="tv_homepage_waste_order_guide">Panduan Penjualan Sampah</string>
+    <string name="tv_homepage_order_take">Pesan Pengambilan</string>
+    <string name="tv_homepage_title1">Panduan Penjualan Sampah</string>
+    <string name="tv_homepage_title1_desc">Cara Menggunakan Aplikasi</string>
+    <string name="tv_homepage_title2_desc">Kategori Sampah Yang Dapat Diubah</string>
+    <string name="tv_detail_order_title">Detail Pesanan</string>
+    <string name="tv_detail_order_waste_category">Jenis Sampah</string>
+    <string name="tv_detail_order_weight_estimation">Estimasi Berat</string>
+    <string name="tv_detail_order_location">Lokasi Penjemputan</string>
+    <string name="tv_track_order_title">Lacak</string>
+    <string name="tv_waste_category_title">Kategori Sampah</string>
+
+
+    <string name="tv_order">Pesanan</string>
+    <string name="tv_order_status_success">Berhasil Masuk</string>
+    <string name="tv_order_status_process">Proses</string>
+    <string name="tv_order_status_failed">Gagal</string>
+    <string name="tv_order_status_delivered">Berhasil Diantar</string>
+    <string name="tv_order_detail_title">Detail Pesanan</string>
+    <string name="tv_order_time">Waktu Pemesanan</string>
+    <string name="tv_officer">Petugas</string>
+    <string name="tv_title_order_track">Waktu Pemesanan</string>
+    <string name="tv_mutation_title">Mutasi</string>
+    <string name="tv_mutation_balance">Saldo Bank Sampah</string>
+    <string name="tv_available_balance">Saldo Tersedia</string>
+    <string name="tv_transfer_limit">Limit Transfer</string>
+    <string name="tv_transaction_history">Riwayat Transaksi</string>
+    <string name="tv_enter_nominal">Masukkan Nominal Penarikan</string>
+    <string name="tv_settings_title">Pengaturan</string>
+    <string name="tv_settings_subtitle1">Ubah Profil</string>
+    <string name="tv_settings_subtitle2">Ubah Sandi</string>
+    <string name="tv_settings_subtitle3">Pengaturan Transaksi</string>
+    <string name="tv_settings_subtitle4">Laporan Sampah</string>
+    <string name="tv_settings_subtitle5">Syarat dan Ketentuan</string>
+    <string name="tv_settings_subtitle6">Keluar</string>
+    <string name="tv_settings_subtitle1_desc">Ubah informasi akun anda</string>
+    <string name="tv_settings_subtitle2_desc">Ubah sandi akun anda</string>
+    <string name="tv_settings_subtitle3_desc">Minimal Penarikan dan Jasa</string>
+    <string name="tv_settings_subtitle4_desc">Laporan Mendetail Seluruh Transaksi</string>
+    <string name="tv_settings_subtitle5_desc">Regulasi Yang Perlu Ditaati</string>
+    <string name="tv_settings_subtitle6_desc">Keluar Dari Akun Anda</string>
+    <string name="tv_change_profile_title">Ubah Profil</string>
+    <string name="tv_change_profile_name">Nama</string>
+    <string name="tv_change_profile_bank_ewallet">Jenis Bank/E-Wallet</string>
+    <string name="tv_change_profile_bank_number">Nomor Rekening</string>
+    <string name="tv_change_profile_mobile_number">Nomor HP</string>
+    <string name="tv_change_profile_address">Alamat</string>
+    <string name="tv_change_password_old">Masukkan Sandi Lama</string>
+    <string name="tv_change_password_New">Masukkan Sandi Baru</string>
+    <string name="tv_homepage_total_balance">Total Saldo</string>
+    <string name="tv_other_orders">Pesanan Lainnya</string>
+
+    <!-- Button  -->
+    <string name="btn_next">Selanjutnya</string>
+    <string name="btn_masuk">Masuk</string>
+    <string name="btn_daftar">Daftar</string>
+    <string name="btn_dont_have_account">Belum Memiliki Akun</string>
+    <string name="btn_have_account">Sudah Memiliki Akun</string>
+    <string name="btn_home">Beranda</string>
+    <string name="btn_order">Pesanan</string>
+    <string name="btn_mutation">Transaksi</string>
+    <string name="btn_settings">Pengaturan</string>
+    <string name="btn_confirmation">Konfirmasi</string>
+    <string name="btn_change_password">Ubah Sandi</string>
+    <string name="btn_join_us">Gabung Sekarang!</string>
+    <string name="btn_action_mutation"><u>Lakukan Penarikan</u></string>
+    <string name="tv_edit_profile_name">Masukkan Nama Anda</string>
+    <string name="tv_hint_name">Masukkan Nama Anda</string>
+    <string name="tv_change_profile_ewallet">Jenis Bank E-Wallet/Rekening</string>
+    <string name="tv_account_number">Nomor Rekening</string>
+    <string name="edt_account_number">Masukkan Nomor Rekening</string>
+    <string name="edt_email_hint">Masukkan Email Anda</string>
+    <string name="edt_mobile_number">Masukkan Nomor HP Anda</string>
+    <string name="edt_address_hint">Masukkan Alamat Anda</string>
+    <string name="edt_password_hint">Masukkan Password Anda</string>
+    <string name="tv_static_rp">Rp</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_order_track">OrderTrackActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="tv_zero_balance">Rp0</string>
+    <string name="tv_welcome_homepage_cardview">Selamat Datang, Pengguna</string>
+    <string name="tv_settings_page_title1">Akun dan Keamanan</string>
+    <string name="tv_settings_page_title2">Umum</string>
+    <string name="tv_make_sure">Pastikan semua data sudah terisi</string>
+    <string name="tv_register_address_form_title">Alamat Rumah</string>
+    <string name="tv_register_home_address_form_title">Masukkan Alamat Rumah Anda</string>
+    <string name="tv_password_do_not_match">Sandi dan Konfirmasi Sandi Tidak Sesuai</string>
+    <string name="daftar_kategori">Daftar Kategori</string>
+    <string name="token_listrik">Token Listrik</string>
+    <string name="tunai">Tunai</string>
+    <string name="penarikan_token_listrik">Penarikan Token Listrik</string>
+    <string name="penarikan_tunai">Penarikan Tunai</string>
+    <string name="penarikan_transfer_bank">Penarikan Transfer Bank</string>
+    <string name="masukkan_11_12_no_pln_kamu">Masukkan 11-12 no PLN kamu</string>
+    <string name="konfirmasi">Konfirmasi</string>
+    <string name="meter_no_no_pelanggan">Meter No./No Pelanggan</string>
+    <string name="masukkan_no_rekening">Masukkan no. rekening</string>
+    <string name="minimal_penarikan_50_000">Minimal penarikan 50.000</string>
+    <string name="masukkan_nominal">Masukkan nominal</string>
+
+
+    <string-array name="jenis_penarikan">
+        <item>Tunai</item>
+        <item>Token Listrik</item>
+        <item>Transfer</item>
+    </string-array>
+
+    <string-array name="jenis_bank">
+        <item>BCA</item>
+        <item>BNI</item>
+        <item>BRI</item>
+        <item>MANDIRI</item>
+        <item>BTN</item>
+        <item>BSI</item>
+    </string-array>
+
+</resources>

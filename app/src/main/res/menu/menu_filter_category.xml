@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/filter_all"
+        android:title="Semua" />
+    <item
+        android:id="@+id/plastik"
+        android:title="Plastik" />
+    <item
+        android:id="@+id/kertas"
+        android:title="Kertas" />
+    <item
+        android:id="@+id/kaleng"
+        android:title="Kaleng" />
+    <item
+        android:id="@+id/lainnya"
+        android:title="Lainnya"/>
+</menu>
