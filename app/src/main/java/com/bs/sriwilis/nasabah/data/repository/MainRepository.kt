@@ -3,17 +3,24 @@ package com.bs.sriwilis.nasabah.data.repository
 import android.util.Log
 import com.bs.sriwilis.nasabah.data.mapping.MappingCategory
 import com.bs.sriwilis.nasabah.data.mapping.MappingNasabah
+import com.bs.sriwilis.nasabah.data.mapping.MappingPenarikan
+import com.bs.sriwilis.nasabah.data.model.CartOrder
 import com.bs.sriwilis.nasabah.data.model.Category
 import com.bs.sriwilis.nasabah.data.model.LoggedAccount
+import com.bs.sriwilis.nasabah.data.model.PenarikanData
 import com.bs.sriwilis.nasabah.data.network.ApiServiceMain
 import com.bs.sriwilis.nasabah.data.response.AddPenarikanDTO
+import com.bs.sriwilis.nasabah.data.response.CartOrderRequest
 import com.bs.sriwilis.nasabah.data.response.ChangeProfileResponseDTO
 import com.bs.sriwilis.nasabah.data.response.Penarikan
+import com.bs.sriwilis.nasabah.data.response.PesananSampahItem
+import com.bs.sriwilis.nasabah.data.response.PesananSampahItemResponse
 import com.bs.sriwilis.nasabah.data.response.RegisterResponseDTO
 import com.bs.sriwilis.nasabah.data.room.AppDatabase
 import com.bs.sriwilis.nasabah.data.room.entity.CategoryEntity
 import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
+import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
 import com.bs.sriwilis.nasabah.helper.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,6 +32,7 @@ class MainRepository(
 
     private val mappingPesananSampah = MappingNasabah()
     private val mappingKategori = MappingCategory()
+    private val mappingPenarikan = MappingPenarikan()
 
     suspend fun logout() {
         withContext(Dispatchers.IO) {
@@ -40,6 +48,26 @@ class MainRepository(
     private suspend fun getPhoneLoggedAccount(): String? {
         val loginResponse = appDatabase.loginResponseDao().getLoginResponseById(1)
         return loginResponse?.no_hp_nasabah
+    }
+
+
+    suspend fun syncLoggedAccount() {
+        withContext(Dispatchers.IO) {
+            val phone = getPhoneLoggedAccount()
+
+            phone?.let {
+                val nasabahEntity = appDatabase.nasabahDao().getNasabahByPhone(it)
+                nasabahEntity.let { nasabah ->
+                    appDatabase.loginResponseDao().updateLoggedAccount(
+                        name = nasabah.nama_nasabah ?: "",
+                        phone = nasabah.no_hp_nasabah ?: "",
+                        address = nasabah.alamat_nasabah ?: "",
+                        gambar = nasabah.gambar_nasabah ?: "",
+                        saldo = nasabah.saldo_nasabah ?: ""
+                    )
+                }
+            }
+        }
     }
 
 
@@ -139,17 +167,15 @@ class MainRepository(
             if (response.isSuccessful) {
                 val responseBody = response.body() ?: return Result.Error("Response body is null")
 
-                // Mapping dari DTO ke Entitas Room
                 val categoryEntities = mappingKategori.mapCategoryResponseDtoToEntity(responseBody)
 
-                // Simpan data ke database Room (opsional, jika perlu disimpan)
                 withContext(Dispatchers.IO) {
                     appDatabase.categoryDao().insert(categoryEntities)
                 }
 
                 Result.Success(categoryEntities)
             } else {
-                Result.Error("Failed to fetch saved news: ${response.message()} (${response.code()})")
+                Result.Error("Failed to fetch data: ${response.message()} (${response.code()})")
             }
         } catch (e: Exception) {
             Result.Error("Error occurred: ${e.message}")
@@ -161,7 +187,44 @@ class MainRepository(
 
     // penarikan
 
-    suspend fun addPenarikanCash(nominal: Int): Result<AddPenarikanDTO> {
+    suspend fun getAllPenarikanDao(): Result<List<PenarikanData>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val penarikanData = appDatabase.penarikanDao().getAllPenarikan()
+                Result.Success(penarikanData)
+            } catch (e: Exception) {
+                Result.Error("Error occured: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getPenarikan(): Result<List<PenarikanEntity>> {
+        return try {
+            val phone = getPhoneLoggedAccount()
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.getAllPenarikan(phone,"Bearer $token")
+
+            if (response.isSuccessful) {
+                val responseBody = response.body() ?: return Result.Error("Response body is null")
+
+                // Mapping dari DTO ke Entitas Room
+                val penarikanEntities = mappingPenarikan.mapPenarikanResponseDtoToEntity(responseBody)
+
+                // Simpan data ke database Room (opsional, jika perlu disimpan)
+                withContext(Dispatchers.IO) {
+                    appDatabase.penarikanDao().insert(penarikanEntities)
+                }
+
+                Result.Success(penarikanEntities)
+            } else {
+                Result.Error("Failed to fetch data: ${response.message()} (${response.code()})")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error occurred: ${e.message}")
+        }
+    }
+
+    suspend fun addPenarikanCash(nominal: Long): Result<AddPenarikanDTO> {
         return try {
             val no_hp_nasabah = getPhoneLoggedAccount()
             val token = getToken() ?: return Result.Error("Token is null")
@@ -181,25 +244,119 @@ class MainRepository(
         }
     }
 
-    // end of penarikan
+    suspend fun addPenarikanPLN(nominal: Long, nomorMeteran: Long): Result<AddPenarikanDTO> {
+        return try {
+            val no_hp_nasabah = getPhoneLoggedAccount()
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.addPenarikanPLN("Bearer $token", no_hp_nasabah, "PLN", nominal, nomorMeteran)
+            if (response.isSuccessful) {
+                val addPenarikanResponseDTO = response.body()
+                if (addPenarikanResponseDTO != null) {
+                    Result.Success(addPenarikanResponseDTO)
+                } else {
+                    Result.Error("Empty Penarikan Body Response")
+                }
+            } else {
+                Result.Error("Failed to Add Penarikan: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error: ${e.message}")
+        }
+    }
 
+    suspend fun addPenarikanTransfer(nominal: Long, nomorRekening: Long, jenisBank: String): Result<AddPenarikanDTO> {
+        return try {
+            val no_hp_nasabah = getPhoneLoggedAccount()
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.addPenarikanTransfer("Bearer $token", no_hp_nasabah, "Transfer", nominal, nomorRekening, jenisBank)
+            if (response.isSuccessful) {
+                val addPenarikanResponseDTO = response.body()
+                if (addPenarikanResponseDTO != null) {
+                    Result.Success(addPenarikanResponseDTO)
+                } else {
+                    Result.Error("Empty Penarikan Body Response")
+                }
+            } else {
+                Result.Error("Failed to Add Penarikan: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error: ${e.message}")
+        }
+    }
+
+
+
+    // end of penarikan
 
     suspend fun syncData(): Result<Unit> {
         return try {
             val nasabahResult = getAllNasabah()
-
             if (nasabahResult is Result.Error) {
+                Log.d("cek error sync nasabah", nasabahResult.error)
                 return Result.Error("Failed to sync nasabah: ${nasabahResult.error}")
             }
+            syncLoggedAccount()
 
             val categoryResult = getCategory()
             if (categoryResult is Result.Error) {
-                return Result.Error("Failed to sync nasabah: ${categoryResult.error}")
+                return Result.Error("Failed to sync category: ${categoryResult.error}")
+            }
+
+            val penarikanResult = getPenarikan()
+            if (penarikanResult is Result.Error) {
+                Log.d("tes penarikan result if empy", penarikanResult.error)
+                return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
             }
 
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
+    suspend fun addCartOrder(
+        lat: String,
+        long: String,
+        pesanan_sampah: List<CartOrder> // Keep using CartTransaction
+    ): Result<PesananSampahItemResponse?> {
+
+        val token = getToken() ?: return Result.Error("Token is null")
+        return try {
+            // Prepare the transaction items for the request
+            val pesananSampahItems = pesanan_sampah.map { cartTransaction ->
+                PesananSampahItem(
+                    gambar = cartTransaction.gambar,
+                    harga_perkiraan = cartTransaction.harga_perkiraan,
+                    berat_perkiraan = cartTransaction.berat_perkiraan,
+                    kategori = cartTransaction.kategori,
+                )
+            }
+
+            // Create the request body
+            val cartOrderRequest = CartOrderRequest(
+                pesananSampah = pesananSampahItems,
+                noHpNasabah = getPhoneLoggedAccount().toString(),
+                idPetugas = "1",
+                lat = lat,
+                long = long,
+                tanggal = "0001-01-01"
+            )
+
+            // Make the API request
+            val response = apiService.addCartOrder("Bearer $token", cartOrderRequest)
+
+            if (response.isSuccessful) {
+                Result.Success(response.body())
+            } else {
+                val statusCode = response.code()
+                val errorBody = response.errorBody()?.string()
+                Log.d("cek error", response.body().toString())
+                Result.Error("Failed to add cart Order: Status code $statusCode, Error body: $errorBody")
+            }
+
+        } catch (e: Exception) {
+            Log.d("cek error", e.toString())
+            Result.Error(e.toString())
         }
     }
 

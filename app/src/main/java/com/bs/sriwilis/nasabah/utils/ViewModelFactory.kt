@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bs.sriwilis.nasabah.helper.InjectionAuth
 import com.bs.sriwilis.nasabah.helper.InjectionMain
 import com.bs.sriwilis.nasabah.ui.HomepageViewModel
+import com.bs.sriwilis.nasabah.ui.addorder.AddOrderViewModel
 import com.bs.sriwilis.nasabah.ui.authorization.AuthViewModel
 import com.bs.sriwilis.nasabah.ui.home.HomeViewModel
 import com.bs.sriwilis.nasabah.ui.setting.SettingViewModel
@@ -42,6 +43,10 @@ class ViewModelFactory private constructor(
             modelClass.isAssignableFrom(TransactionViewModel::class.java) -> {
                 val repository = InjectionMain.provideRepository(context)
                 TransactionViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(AddOrderViewModel::class.java) -> {
+                val repository = InjectionMain.provideRepository(context)
+                AddOrderViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

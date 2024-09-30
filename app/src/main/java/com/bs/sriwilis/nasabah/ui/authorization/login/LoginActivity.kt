@@ -14,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityLoginBinding
 import com.bs.sriwilis.nasabah.ui.authorization.AuthViewModel
@@ -21,12 +22,18 @@ import com.bs.sriwilis.nasabah.ui.authorization.register.RegisterActivity
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import com.bs.sriwilis.nasabah.helper.Result
 import com.bs.sriwilis.nasabah.ui.HomepageActivity
+import com.bs.sriwilis.nasabah.ui.splashscreen.WelcomeViewModel
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private var isPasswordVisible = false
     private lateinit var binding: ActivityLoginBinding
 
     private val viewModel by viewModels<AuthViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
+
+    private val welcomeViewModel by viewModels<WelcomeViewModel> {
         ViewModelFactory.getInstance(this)
     }
 
@@ -119,22 +126,23 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 is Result.Success -> {
-                    binding.progressBar.visibility = View.GONE
-//                    lifecycleScope.launch {
-//                        welcomeViewModel.syncData()
-//                    }
-                    AlertDialog.Builder(this).apply {
-                        setTitle("Sukses")
-                        setMessage("Anda Berhasil Masuk")
-                        setPositiveButton("OK") { _, _ ->
-                            val intent = Intent(this@LoginActivity, HomepageActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                    lifecycleScope.launch {
+                        welcomeViewModel.syncData()
+                        binding.progressBar.visibility = View.GONE
+                        AlertDialog.Builder(this@LoginActivity).apply {
+                            setTitle("Sukses")
+                            setMessage("Anda Berhasil Masuk")
+                            setPositiveButton("OK") { _, _ ->
+                                val intent = Intent(this@LoginActivity, HomepageActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            create()
+                            show()
                         }
-                        create()
-                        show()
                     }
                 }
+
 
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE

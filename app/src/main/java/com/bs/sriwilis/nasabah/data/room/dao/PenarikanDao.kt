@@ -1,12 +1,13 @@
 package com.bs.sriwilis.nasabah.data.room.dao
 
 import androidx.room.*
+import com.bs.sriwilis.nasabah.data.model.PenarikanData
 import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
 
 @Dao
 interface PenarikanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPenarikan(penarikan: PenarikanEntity)
+    suspend fun insert(penarikanEntity: List<PenarikanEntity>)
 
     @Update
     suspend fun updatePenarikan(penarikan: PenarikanEntity)
@@ -21,5 +22,5 @@ interface PenarikanDao {
     suspend fun getPenarikanByNasabahId(idNasabah: Int): List<PenarikanEntity>
 
     @Query("SELECT * FROM penarikan_uang_table ORDER BY tanggal DESC")
-    suspend fun getAllPenarikan(): List<PenarikanEntity>
+    suspend fun getAllPenarikan(): List<PenarikanData>
 }

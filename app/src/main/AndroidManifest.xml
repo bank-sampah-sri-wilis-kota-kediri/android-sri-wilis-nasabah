@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <application
         android:allowBackup="false"
@@ -14,6 +18,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BankSampahSriWilisNasabah"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.addorder.AddCartOrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.addorder.AddOrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.order.pickupwaste.PickUpWasteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.order.transactionwaste.TransactionWasteActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.transaction.BankActivity"
             android:exported="false" />

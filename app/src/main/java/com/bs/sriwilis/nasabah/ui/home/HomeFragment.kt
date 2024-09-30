@@ -22,6 +22,7 @@ import com.bs.sriwilis.nasabah.helper.Result
 import com.bs.sriwilis.nasabah.ui.home.category.CategoryActivity
 import com.bs.sriwilis.nasabah.ui.setting.profile.ChangeProfileActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -64,22 +65,9 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
 
         lifecycleScope.launch {
-            when(val result = viewModel.syncData()){
-                is Result.Loading -> {
-                    Log.d("Sync Data", "Loading...")
-                }
-                is Result.Success -> {
-                    lifecycleScope.launch {
-                        viewModel.getLoggedInAccount()
-                    }
-                }
-                is Result.Error -> {
-                    lifecycleScope.launch {
-                        viewModel.getLoggedInAccount()
-                    }
-                }
-            }
+            viewModel.getLoggedInAccount()
         }
+
 
         observeViewModel()
     }
@@ -95,27 +83,22 @@ class HomeFragment : Fragment() {
                     val formattedBalance = "Rp $intBalance"
                     binding.tvBalance.text = formattedBalance
 
-                    loggedAccount?.gambar_nasabah?.let { gambar_nasabah ->
-                        if (gambar_nasabah.isNotEmpty()) {
-                            val bitmap = decodeBase64ToBitmap(gambar_nasabah)
+                    if (loggedAccount != null) {
+                        if (!loggedAccount.gambar_nasabah.isNullOrEmpty()) {
+                            val bitmap = decodeBase64ToBitmap(loggedAccount.gambar_nasabah)
                             if (bitmap != null) {
                                 val tempFile = saveBitmapToFile(bitmap)
                                 if (tempFile != null) {
-                                    Glide.with(requireContext())
-                                        .clear(binding.icProfile)
-
-                                    Glide.with(requireContext())
+                                    Glide.with(this).clear(binding.icProfile)
+                                    Glide.with(this)
                                         .load(tempFile)
+                                        .signature(ObjectKey(System.currentTimeMillis()))
                                         .into(binding.icProfile)
                                 } else {
                                     binding.icProfile.setImageResource(R.drawable.ic_profile)
                                 }
                             }
-                        } else {
-                            binding.icProfile.setImageResource(R.drawable.ic_profile)
                         }
-                    } ?: run {
-                        binding.icProfile.setImageResource(R.drawable.ic_profile)
                     }
                 }
                 is Result.Error -> {

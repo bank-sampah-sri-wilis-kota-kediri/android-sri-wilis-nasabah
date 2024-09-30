@@ -1,6 +1,6 @@
 <resources>
     <!-- Text View  -->
-    <string name="app_name">Bank Sampah Sri Wilis Pengguna</string>
+    <string name="app_name">Nasabah BS Sri Wilis</string>
     <string name="tv_title_splashscreen1">Sampah Jadi Rupiah</string>
     <string name="tv_title_splashscreen2">Transaksi Mudah</string>
     <string name="tv_title_splashscreen3">Proses Realtime</string>
@@ -130,6 +130,8 @@
     <string name="masukkan_no_rekening">Masukkan no. rekening</string>
     <string name="minimal_penarikan_50_000">Minimal penarikan 50.000</string>
     <string name="masukkan_nominal">Masukkan nominal</string>
+    <string name="pesan_penjemputan">Pesan Penjemputan</string>
+    <string name="tambah_item">Tambah Item</string>
 
 
     <string-array name="jenis_penarikan">

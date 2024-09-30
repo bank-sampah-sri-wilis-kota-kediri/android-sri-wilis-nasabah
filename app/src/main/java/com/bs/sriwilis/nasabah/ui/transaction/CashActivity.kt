@@ -10,10 +10,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityCashBinding
 import com.bs.sriwilis.nasabah.helper.Result
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class CashActivity : AppCompatActivity() {
@@ -39,7 +41,7 @@ class CashActivity : AppCompatActivity() {
             }
 
             btnConfirm.setOnClickListener {
-                val nominal = etNominal.text.toString().toInt()
+                val nominal = etNominal.text.toString().toLong()
                 addPenarikanCash(nominal)
             }
         }
@@ -74,8 +76,8 @@ class CashActivity : AppCompatActivity() {
         return nominalText.isNotEmpty() && nominalText.toInt() >= 50000
     }
 
-    private fun addPenarikanCash(nominal: Int) {
-        viewModel.addPenarikanCash(nominal) // Call your ViewModel function here
+    private fun addPenarikanCash(nominal: Long) {
+        viewModel.addPenarikanCash(nominal)
     }
 
     private fun observeViewModel() {
@@ -85,14 +87,19 @@ class CashActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is Result.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    AlertDialog.Builder(this).apply {
-                        setTitle("Sukses!")
-                        setMessage("Penarikan uang berhasil ditambahkan, menunggu konfirmasi Admin.")
-                        setPositiveButton("OK") { _, _ -> finish() }
-                        create()
-                        show()
+                    lifecycleScope.launch {
+                        viewModel.syncData()
+                        binding.progressBar.visibility = View.GONE
+
+                        AlertDialog.Builder(this@CashActivity).apply {
+                            setTitle("Sukses!")
+                            setMessage("Penarikan uang berhasil ditambahkan, menunggu konfirmasi Admin.")
+                            setPositiveButton("OK") { _, _ -> finish() }
+                            create()
+                            show()
+                        }
                     }
+
                 }
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
