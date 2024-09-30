@@ -10,10 +10,10 @@ data class PenarikanEntity(
     val id: Int,
     val id_nasabah: Int,
     val jenis_penarikan: String,
-    val nominal: Double,
+    val nominal: Long,
     val tanggal: String,
-    val nomor_meteran: Int?,
-    val nomor_rekening: Int?,
+    val nomor_meteran: Long?,
+    val nomor_rekening: Long?,
     val jenis_bank: String?,
     val status_penarikan: String
 )

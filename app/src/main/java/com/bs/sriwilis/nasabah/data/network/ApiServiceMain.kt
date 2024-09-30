@@ -1,15 +1,19 @@
 package com.bs.sriwilis.nasabah.data.network
 
 import com.bs.sriwilis.nasabah.data.response.AddPenarikanDTO
+import com.bs.sriwilis.nasabah.data.response.CartOrderRequest
 import com.bs.sriwilis.nasabah.data.response.CategoryResponseDTO
 import com.bs.sriwilis.nasabah.data.response.ChangeProfileResponseDTO
 import com.bs.sriwilis.nasabah.data.response.NasabahResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PenarikanResponseDTO
+import com.bs.sriwilis.nasabah.data.response.PesananSampahItemResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -49,8 +53,9 @@ interface ApiServiceMain {
 
     // penarikan
 
-    @GET("penarikan/show-all")
+    @GET("penarikan/show/{phone}")
     suspend fun getAllPenarikan(
+        @Path("phone") phone: String?,
         @Header("Authorization") token: String,
     ): Response<PenarikanResponseDTO>
 
@@ -60,7 +65,7 @@ interface ApiServiceMain {
         @Header("Authorization") token: String,
         @Field("no_hp_nasabah") no_hp_nasabah: String?,
         @Field("jenis_penarikan") jenis_penarikan: String?,
-        @Field("nominal") nominal: Int?
+        @Field("nominal") nominal: Long?
     ): Response<AddPenarikanDTO>
 
     @FormUrlEncoded
@@ -69,8 +74,8 @@ interface ApiServiceMain {
         @Header("Authorization") token: String,
         @Field("no_hp_nasabah") no_hp_nasabah: String?,
         @Field("jenis_penarikan") jenis_penarikan: String?,
-        @Field("nominal") nominal: Int?,
-        @Field("nomor_meteran") nomor_meteran: Int?
+        @Field("nominal") nominal: Long?,
+        @Field("nomor_meteran") nomor_meteran: Long?
     ): Response<AddPenarikanDTO>
 
 
@@ -80,11 +85,24 @@ interface ApiServiceMain {
         @Header("Authorization") token: String,
         @Field("no_hp_nasabah") no_hp_nasabah: String?,
         @Field("jenis_penarikan") jenis_penarikan: String?,
-        @Field("nominal") nominal: Int?,
-        @Field("nomor_rekening") nomor_rekening: Int?,
+        @Field("nominal") nominal: Long?,
+        @Field("nomor_rekening") nomor_rekening: Long?,
         @Field("jenis_bank") jenis_bank: String?
     ): Response<AddPenarikanDTO>
 
 
     // end of penarikan
+
+
+    // Pesanan Sampah
+
+    @Headers("Content-type: application/json")
+    @POST("pesanan/add")
+    suspend fun addCartOrder(
+        @Header("Authorization") token: String,
+        @Body cartTransactionRequest: CartOrderRequest
+    ): Response<PesananSampahItemResponse>
+
+
+    // End Of Pesanan Sampah
 }

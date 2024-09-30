@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.addorder.AddOrderActivity">
+
+    <!-- AppBar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@color/blue_primary"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/baseline_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/change_profile_title"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/change_profile_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pesan_penjemputan"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/inter_extra_bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="55dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ScrollView for Content -->
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="500dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/cl_appbar" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="15dp">
+
+
+            <Button
+                android:id="@+id/btn_add_cart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tambah Item"
+                android:backgroundTint="@color/blue_primary"
+                android:layout_marginTop="8dp"
+                app:cornerRadius="8dp"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ScrollView
+                android:id="@+id/sv_rv_cart_waste"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/btn_add_cart">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_transaction_cart"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    tools:listitem="@layout/card_order_cart"
+                    app:layout_constraintTop_toBottomOf="@id/btn_add_cart"
+                    android:layout_marginTop="8dp"/>
+            </ScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <!-- Result View -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_result_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="6dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_save">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_result_estimation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:id="@+id/tv_lat_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="Belum Ada Data"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_long_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="Belum Ada Data"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@id/tv_lat_value"
+                    app:layout_constraintTop_toBottomOf="@id/tv_lat_value" />
+                
+                <Button
+                    android:id="@+id/btn_detect_location"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    app:cornerRadius="8dp"
+                    android:backgroundTint="@color/blue_primary"
+                    android:text="Deteksi Lokasi"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_price_estimation_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_extra_bold"
+                    android:text="Harga Perkiraan"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_long_value"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_detect_location" />
+
+                <TextView
+                    android:id="@+id/tv_price_estimation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:fontFamily="@font/inter_semi_bold"
+                    android:text="Rp-"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_price_estimation_label"
+                    app:layout_constraintTop_toBottomOf="@id/tv_price_estimation_label" />
+
+                <TextView
+                    android:id="@+id/tv_weight_estimation_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Berat Perkiraan"
+                    android:fontFamily="@font/inter_extra_bold"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_price_estimation_label"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_weight_estimation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_semi_bold"
+                    android:text="-kg"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="@id/tv_weight_estimation_label"
+                    app:layout_constraintTop_toBottomOf="@id/tv_weight_estimation_label" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/scrollView2"
+        app:layout_constraintTop_toTopOf="@+id/cl_appbar" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:backgroundTint="@color/blue_primary"
+        android:fontFamily="@font/inter_bold"
+        android:text="Submit Pesanan"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

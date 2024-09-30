@@ -7,9 +7,16 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityBankBinding
+import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilis.nasabah.utils.ViewModelFactory
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class BankActivity : AppCompatActivity() {
@@ -17,18 +24,35 @@ class BankActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBankBinding
     private var selectedBank: String? = null
 
+    private val viewModel by viewModels<TransactionViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBankBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnBack.setOnClickListener{
-            onBackPressed()
+
+        binding.apply {
+            btnConfirm.isEnabled = false
+            btnBack.setOnClickListener{
+                onBackPressed()
+            }
+
+            btnConfirm.setOnClickListener{
+                val nomorRekening = etAccountNumber.text.toString().toLong()
+                val nominal = etNominal.text.toString().toLong()
+                selectedBank?.let { it1 -> addPenarikanTransfer(nominal, nomorRekening, it1) }
+            }
+
         }
+
 
         setupBankSpinner()
         setupEditTextListener()
         updateConfirmButtonState()
+        observeViewModel()
     }
 
     private fun setupBankSpinner() {
@@ -88,5 +112,45 @@ class BankActivity : AppCompatActivity() {
         } else {
             binding.btnConfirm.setBackgroundColor(getColor(R.color.grey_primary))
         }
+    }
+
+    private fun addPenarikanTransfer(nominal: Long, nomorRekening: Long, jenisBank: String) {
+        viewModel.addPenarikanTransfer(nominal, nomorRekening, jenisBank)
+    }
+
+    private fun observeViewModel() {
+        viewModel.penarikanResult.observe(this, Observer { result ->
+            when (result) {
+                is Result.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+                is Result.Success -> {
+                    lifecycleScope.launch {
+                        viewModel.syncData()
+                        binding.progressBar.visibility = View.GONE
+                        AlertDialog.Builder(this@BankActivity).apply {
+                            setTitle("Sukses!")
+                            setMessage("Penarikan Transfer Bank berhasil ditambahkan, menunggu konfirmasi Admin.")
+                            setPositiveButton("OK") { _, _ -> finish() }
+                            create()
+                            show()
+                        }
+                    }
+
+                }
+
+                is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    AlertDialog.Builder(this).apply {
+                        setTitle("Gagal!")
+                        setMessage("Penarikan Transfer Bank gagal ditambahkan. ${result.error}")
+                        setPositiveButton("OK", null)
+                        create()
+                        show()
+                    }
+                }
+            }
+        })
     }
 }

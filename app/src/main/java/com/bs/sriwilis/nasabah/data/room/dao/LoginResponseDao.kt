@@ -27,4 +27,15 @@ interface LoginResponseDao {
         WHERE id = 1
     """)
     suspend fun updatePhoneNumber(name: String, phone: String, address: String, gambar: String)
+
+    @Query("""
+        UPDATE login_response_table
+        SET nama_nasabah = :name, 
+            no_hp_nasabah = :phone,
+            alamat_nasabah = :address, 
+            gambar_nasabah = :gambar,
+            saldo_nasabah = :saldo
+        WHERE id = 1
+    """)
+    suspend fun updateLoggedAccount(name: String, phone: String, address: String, gambar: String, saldo: String)
 }

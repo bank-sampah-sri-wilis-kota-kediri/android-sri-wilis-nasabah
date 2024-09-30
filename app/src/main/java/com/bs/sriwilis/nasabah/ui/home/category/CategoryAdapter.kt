@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,6 +72,7 @@ class CategoryAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun updateCategory(newCategories: List<Category?>) {
         this.category = newCategories
+        Log.d("CategoryAdapter", "Jumlah data category: ${category.size}")
         notifyDataSetChanged()
     }
 

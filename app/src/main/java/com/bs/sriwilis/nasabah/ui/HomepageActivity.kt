@@ -1,5 +1,6 @@
 package com.bs.sriwilis.nasabah.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -8,9 +9,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityHomepageBinding
+import com.bs.sriwilis.nasabah.ui.addorder.AddOrderActivity
 import com.bs.sriwilis.nasabah.ui.home.HomeFragment
 import com.bs.sriwilis.nasabah.ui.order.OrderFragment
 import com.bs.sriwilis.nasabah.ui.setting.SettingFragment
+import com.bs.sriwilis.nasabah.ui.setting.profile.ChangeProfileActivity
 import com.bs.sriwilis.nasabah.ui.transaction.TransactionFragment
 
 @Suppress("DEPRECATION")
@@ -26,6 +29,11 @@ class HomepageActivity : AppCompatActivity() {
         binding.bottomNavigationView.menu.getItem(2).isEnabled = true
 
         replaceFragment(HomeFragment())
+
+        binding.fabAddOrder.setOnClickListener{
+            val intent = Intent(this, AddOrderActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {

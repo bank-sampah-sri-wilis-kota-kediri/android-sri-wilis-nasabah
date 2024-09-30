@@ -5,9 +5,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.room.InvalidationTracker
 import com.bs.sriwilis.nasabah.R
+import com.bs.sriwilis.nasabah.helper.Result
 import com.bs.sriwilis.nasabah.databinding.ActivityElectricBinding
+import com.bs.sriwilis.nasabah.utils.ViewModelFactory
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class ElectricActivity : AppCompatActivity() {
@@ -15,6 +23,9 @@ class ElectricActivity : AppCompatActivity() {
     private lateinit var binding: ActivityElectricBinding
     private var selectedOption: String? = null
 
+    private val viewModel by viewModels<TransactionViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,24 +35,27 @@ class ElectricActivity : AppCompatActivity() {
         binding.apply {
             btnConfirm.isEnabled = false
             btnConfirm.setOnClickListener{
+                val meterNo = etMeterNo.text.toString().toLong()
+                selectedOption?.let { it1 -> addPenarikanPLN(it1.toLong(), meterNo) }
             }
-        }
 
-        binding.btnBack.setOnClickListener{
-            onBackPressed()
+            btnBack.setOnClickListener{
+                onBackPressed()
+            }
         }
 
         setupCardViewListeners()
         setupEditTextListener()
         updateConfirmButtonState()
+        observeViewModel()
     }
 
     private fun setupCardViewListeners() {
         val options = listOf(
-            binding.option20000 to "20,000",
-            binding.option50000 to "50,000",
-            binding.option100000 to "100,000",
-            binding.option200000 to "200,000"
+            binding.option20000 to "22500",
+            binding.option50000 to "52500",
+            binding.option100000 to "102500",
+            binding.option200000 to "202500"
         )
 
         for ((cardView, value) in options) {
@@ -78,6 +92,10 @@ class ElectricActivity : AppCompatActivity() {
         return input.length == 11 || input.length == 12
     }
 
+    private fun addPenarikanPLN(nominal: Long, meteranNo: Long) {
+        viewModel.addPenarikanPLN(nominal, meteranNo)
+    }
+
     private fun updateConfirmButtonState() {
         val isValid = isEditTextValid() && selectedOption != null
         binding.btnConfirm.isEnabled = isValid
@@ -87,6 +105,41 @@ class ElectricActivity : AppCompatActivity() {
             binding.btnConfirm.setBackgroundColor(getColor(R.color.grey_primary))
         }
 
+    }
+
+    private fun observeViewModel() {
+        viewModel.penarikanResult.observe(this, Observer { result ->
+            when (result) {
+                is Result.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+                is Result.Success -> {
+                    lifecycleScope.launch {
+                        viewModel.syncData()
+                        binding.progressBar.visibility = View.GONE
+                        AlertDialog.Builder(this@ElectricActivity).apply {
+                            setTitle("Sukses!")
+                            setMessage("Penarikan Token PLN berhasil ditambahkan, menunggu konfirmasi Admin.")
+                            setPositiveButton("OK") { _, _ -> finish() }
+                            create()
+                            show()
+                        }
+                    }
+                }
+
+                is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    AlertDialog.Builder(this).apply {
+                        setTitle("Gagal!")
+                        setMessage("Penarikan Token PLN gagal ditambahkan. ${result.error}")
+                        setPositiveButton("OK", null)
+                        create()
+                        show()
+                    }
+                }
+            }
+        })
     }
 
 }
