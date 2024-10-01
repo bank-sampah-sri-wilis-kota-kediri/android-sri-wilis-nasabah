@@ -36,12 +36,12 @@ class OrderFragment : Fragment() {
     }
 
     private fun navigateToTransaksiMasuk() {
-        val intent = Intent(requireContext(), PickUpWasteActivity::class.java)
+        val intent = Intent(requireContext(), TransactionWasteActivity::class.java)
         startActivity(intent)
     }
 
     private fun navigateToPenjemputanPesanan() {
-        val intent = Intent(requireContext(), TransactionWasteActivity::class.java)
+        val intent = Intent(requireContext(), PickUpWasteActivity::class.java)
         startActivity(intent)
     }
 

@@ -132,6 +132,7 @@
     <string name="masukkan_nominal">Masukkan nominal</string>
     <string name="pesan_penjemputan">Pesan Penjemputan</string>
     <string name="tambah_item">Tambah Item</string>
+    <string name="riwayat_penjemputan">Riwayat Penjemputan</string>
 
 
     <string-array name="jenis_penarikan">

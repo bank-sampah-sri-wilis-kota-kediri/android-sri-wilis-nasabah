@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/filter_all"
+        android:title="Semua" />
+    <item
+        android:id="@+id/filter_completed"
+        android:title="Selesai" />
+    <item
+        android:id="@+id/filter_pending"
+        android:title="Pending" />
+    <item
+        android:id="@+id/filter_scheduled"
+        android:title="Diproses" />
+    <item
+        android:id="@+id/filter_failed"
+        android:title="Gagal" />
+</menu>

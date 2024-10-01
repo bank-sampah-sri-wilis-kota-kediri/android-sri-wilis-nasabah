@@ -1,6 +1,7 @@
 package com.bs.sriwilis.nasabah.ui.home
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -11,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity.LOCATION_SERVICE
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.R
@@ -19,6 +22,7 @@ import com.bs.sriwilis.nasabah.databinding.FragmentHomeBinding
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import kotlinx.coroutines.launch
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilis.nasabah.ui.addorder.AddOrderActivity
 import com.bs.sriwilis.nasabah.ui.home.category.CategoryActivity
 import com.bs.sriwilis.nasabah.ui.setting.profile.ChangeProfileActivity
 import com.bumptech.glide.Glide
@@ -27,7 +31,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+@Suppress("DEPRECATION")
 class HomeFragment : Fragment() {
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 101
+    }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -59,6 +68,10 @@ class HomeFragment : Fragment() {
                 val intent = Intent(requireContext(), CategoryActivity::class.java)
                 startActivity(intent)
             }
+        }
+
+        binding.btnStartRecycle.setOnClickListener {
+             checkIfLocationEnabledAndProceed()
         }
 
         val factory = ViewModelFactory.getInstance(requireContext())
@@ -110,6 +123,34 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun checkIfLocationEnabledAndProceed() {
+        val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as android.location.LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)
+
+        if (!isGpsEnabled && !isNetworkEnabled) {
+            Toast.makeText(requireContext(), "Please enable location services", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        } else {
+            val intent = Intent(requireContext(), AddOrderActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    // Menangani hasil permintaan izin
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                checkIfLocationEnabledAndProceed()
+            } else {
+                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
 
     private fun decodeBase64ToBitmap(base64String: String): Bitmap? {

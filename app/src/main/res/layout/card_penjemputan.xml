@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_marginHorizontal="2dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="4dp">
+
+        <!-- Nama Nasabah -->
+        <TextView
+            android:id="@+id/tv_label_nama_pesanan"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@color/blue_primary"
+            android:textSize="16sp"
+            android:text="Nama:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_nama_pesanan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semi_bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:text="Guntur"
+            app:layout_constraintStart_toEndOf="@+id/tv_label_nama_pesanan"
+            app:layout_constraintTop_toTopOf="@+id/tv_label_nama_pesanan"
+            android:layout_marginStart="8dp"/>
+
+        <!-- Tanggal -->
+        <TextView
+            android:id="@+id/tv_label_tanggal_pesanan"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@color/blue_primary"
+            android:textSize="16sp"
+            android:text="Tanggal:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_nama_pesanan"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tv_tanggal_pesanan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semi_bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:text="12 Desember 2024"
+            app:layout_constraintStart_toEndOf="@+id/tv_label_tanggal_pesanan"
+            app:layout_constraintTop_toTopOf="@+id/tv_label_tanggal_pesanan"
+            android:layout_marginStart="8dp"/>
+
+        <!-- Berat -->
+        <TextView
+            android:id="@+id/tv_label_berat_transaksi"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@color/blue_primary"
+            android:textSize="16sp"
+            android:text="Berat:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_tanggal_pesanan"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tv_berat_transaksi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semi_bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:text="5 kg"
+            app:layout_constraintStart_toEndOf="@+id/tv_label_berat_transaksi"
+            app:layout_constraintTop_toTopOf="@+id/tv_label_berat_transaksi"
+            android:layout_marginStart="8dp"/>
+
+        <!-- No Wa Pesanan -->
+        <TextView
+            android:id="@+id/tv_label_nomor_wa_pesanan"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@color/blue_primary"
+            android:textSize="16sp"
+            android:text="No WA:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_label_berat_transaksi"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tv_nomor_wa_pesanan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semi_bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:text="6288000000"
+            app:layout_constraintStart_toEndOf="@+id/tv_label_nomor_wa_pesanan"
+            app:layout_constraintTop_toTopOf="@+id/tv_label_nomor_wa_pesanan"
+            android:layout_marginStart="8dp"/>
+
+        <!-- Tulisan Selesai -->
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/green_label"
+            android:fontFamily="@font/inter_regular"
+            android:padding="4dp"
+            android:text="Selesai"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
