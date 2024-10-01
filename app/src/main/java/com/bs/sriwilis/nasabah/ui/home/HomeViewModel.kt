@@ -37,10 +37,6 @@ class HomeViewModel(private val repository: MainRepository): ViewModel() {
         _catalog.postValue(result)
     }
 
-    suspend fun syncData(): Result<Unit> {
-        return repository.syncData()
-    }
-
     fun filterData(filter: String) {
         viewModelScope.launch {
             _categories.postValue(Result.Loading)

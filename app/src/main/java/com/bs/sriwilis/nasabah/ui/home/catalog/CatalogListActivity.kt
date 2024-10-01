@@ -22,6 +22,7 @@ import com.bs.sriwilis.nasabah.ui.home.category.CategoryAdapter
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 class CatalogListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCatalogListBinding
@@ -40,6 +41,10 @@ class CatalogListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         catalogAdapter = CatalogAdapter(emptyList(), this)
+
+        lifecycleScope.launch {
+            viewModel.getCatalog()
+        }
 
         lifecycleScope.launch {
             observeViewModel()
@@ -88,9 +93,5 @@ class CatalogListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewModel.getCatalog()
-            viewModel.syncData()
-        }
     }
 }

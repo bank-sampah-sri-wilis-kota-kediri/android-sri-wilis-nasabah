@@ -290,7 +290,7 @@ class MainRepository(
         }
     }
 
-    suspend fun getCategory(): Result<List<CategoryEntity>> {
+    suspend fun getAllCategory(): Result<List<CategoryEntity>> {
         return try {
             val token = getToken() ?: return Result.Error("Token is null")
             val response = apiService.getAllCategory("Bearer $token")
@@ -329,7 +329,7 @@ class MainRepository(
         }
     }
 
-    suspend fun getPenarikan(): Result<List<PenarikanEntity>> {
+    suspend fun getAllPenarikan(): Result<List<PenarikanEntity>> {
         return try {
             val phone = getPhoneLoggedAccount()
             val token = getToken() ?: return Result.Error("Token is null")
@@ -449,11 +449,26 @@ class MainRepository(
         }
     }
 
+    suspend fun syncDataCatalog(): Result<Unit> {
+        return try {
+            appDatabase.catalogDao().deleteAllCatalog()
+
+            val catalogResult = getAllCatalog()
+            if (catalogResult is Result.Error) {
+                return Result.Error("Failed to sync catalog: ${catalogResult.error}")
+            }
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
     suspend fun syncDataPenarikan(): Result<Unit> {
         return try {
             appDatabase.penarikanDao().deleteAllPenarikan()
 
-            val penarikanResult = getPenarikan()
+            val penarikanResult = getAllPenarikan()
             if (penarikanResult is Result.Error) {
                 return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
             }
@@ -468,7 +483,7 @@ class MainRepository(
         return try {
             appDatabase.categoryDao().deleteAllCategory()
 
-            val catalogResult = getCatalog()
+            val catalogResult = getAllCatalog()
             if (catalogResult is Result.Error) {
                 return Result.Error("Failed to sync penarikan: ${catalogResult.error}")
             }
@@ -497,45 +512,12 @@ class MainRepository(
 
     suspend fun syncData(): Result<Unit> {
         return try {
-            appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
-            appDatabase.pesananSampahDao().deleteAllPesananSampah()
-            appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
-            appDatabase.transaksiSampahDao().deleteAllTransaksiSampah()
-            appDatabase.nasabahDao().deleteAllNasabah()
-            appDatabase.categoryDao().deleteAllCategory()
-            appDatabase.catalogDao().deleteAllCatalog()
-            appDatabase.penarikanDao().deleteAllPenarikan()
-
-            val nasabahResult = getNasabah()
-            if (nasabahResult is Result.Error) {
-                return Result.Error("Failed to sync nasabah: ${nasabahResult.error}")
-            }
-            syncLoggedAccount()
-
-            val categoryResult = getCategory()
-            if (categoryResult is Result.Error) {
-                return Result.Error("Failed to sync category: ${categoryResult.error}")
-            }
-
-            val penarikanResult = getPenarikan()
-            if (penarikanResult is Result.Error) {
-                return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
-            }
-
-            val catalogResult = getCatalog()
-            if (catalogResult is Result.Error) {
-                return Result.Error("Failed to sync penarikan: ${catalogResult.error}")
-            }
-
-            val pesananResult = getAllPesanan()
-            if (pesananResult is Result.Error) {
-                return Result.Error("Failed to sync pesanan: ${pesananResult.error}")
-            }
-
-            val transaksiResult = getAllTransaksi()
-            if (transaksiResult is Result.Error) {
-                return Result.Error("Failed to sync transaksi: ${transaksiResult.error}")
-            }
+            syncDataNasabah()
+            syncDataCategory()
+            syncDataPenarikan()
+            syncDataPesananSampah()
+            syncDataKeranjangTransaksi()
+            syncDataCatalog()
 
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -609,7 +591,7 @@ class MainRepository(
         }
     }
 
-    suspend fun getCatalog(): Result<List<CatalogEntity>> {
+    suspend fun getAllCatalog(): Result<List<CatalogEntity>> {
         return try {
             val token = getToken() ?: return Result.Error("Token is null")
             val response = apiService.getAllCatalog("Bearer $token")

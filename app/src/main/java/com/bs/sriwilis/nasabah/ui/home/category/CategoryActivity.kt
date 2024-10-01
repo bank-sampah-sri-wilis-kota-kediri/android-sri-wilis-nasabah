@@ -125,9 +125,5 @@ class CategoryActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewModel.filterData("semua")
-            viewModel.syncData()
-        }
     }
 }
