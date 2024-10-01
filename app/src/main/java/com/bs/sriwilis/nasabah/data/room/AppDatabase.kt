@@ -12,10 +12,14 @@ import com.bs.sriwilis.nasabah.data.room.entity.CategoryEntity
 import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
 import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
+import com.bs.sriwilispetugas.data.room.PesananSampahEntity
+import com.bs.sriwilispetugas.data.room.PesananSampahKeranjangEntity
+import com.bs.sriwilispetugas.data.room.dao.PesananSampahDao
+import com.bs.sriwilispetugas.data.room.dao.PesananSampahKeranjangDao
 
 @Database(
-    entities = [LoginResponseEntity::class, NasabahEntity::class, CategoryEntity::class, PenarikanEntity::class],
-    version = 7,
+    entities = [LoginResponseEntity::class, NasabahEntity::class, CategoryEntity::class, PenarikanEntity::class, PesananSampahKeranjangEntity::class, PesananSampahEntity::class],
+    version = 8,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -24,6 +28,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun nasabahDao(): NasabahDao
     abstract fun categoryDao(): CategoryDao
     abstract fun penarikanDao(): PenarikanDao
+    abstract fun pesananSampahKeranjangDao(): PesananSampahKeranjangDao
+    abstract fun pesananSampahDao(): PesananSampahDao
 
     companion object {
         @Volatile

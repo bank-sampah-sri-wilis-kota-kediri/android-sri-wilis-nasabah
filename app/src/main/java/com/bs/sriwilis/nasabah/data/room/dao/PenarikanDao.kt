@@ -23,4 +23,8 @@ interface PenarikanDao {
 
     @Query("SELECT * FROM penarikan_uang_table ORDER BY tanggal DESC")
     suspend fun getAllPenarikan(): List<PenarikanData>
+
+    // Delete all Penarikan records
+    @Query("DELETE FROM penarikan_uang_table")
+    suspend fun deleteAllPenarikan()
 }

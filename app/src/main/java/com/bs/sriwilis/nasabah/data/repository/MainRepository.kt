@@ -4,6 +4,9 @@ import android.util.Log
 import com.bs.sriwilis.nasabah.data.mapping.MappingCategory
 import com.bs.sriwilis.nasabah.data.mapping.MappingNasabah
 import com.bs.sriwilis.nasabah.data.mapping.MappingPenarikan
+import com.bs.sriwilis.nasabah.data.mapping.MappingPesanan
+import com.bs.sriwilis.nasabah.data.model.CardDetailPesanan
+import com.bs.sriwilis.nasabah.data.model.CardPesanan
 import com.bs.sriwilis.nasabah.data.model.CartOrder
 import com.bs.sriwilis.nasabah.data.model.Category
 import com.bs.sriwilis.nasabah.data.model.LoggedAccount
@@ -22,6 +25,7 @@ import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
 import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilispetugas.data.room.PesananSampahKeranjangEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -32,11 +36,15 @@ class MainRepository(
 
     private val mappingPesananSampah = MappingNasabah()
     private val mappingKategori = MappingCategory()
+    private val mappingPesanan = MappingPesanan()
     private val mappingPenarikan = MappingPenarikan()
 
     suspend fun logout() {
         withContext(Dispatchers.IO) {
             appDatabase.loginResponseDao().deleteAll()
+            appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
+            appDatabase.pesananSampahDao().deleteAllPesananSampah()
+            appDatabase.nasabahDao().deleteAllNasabah()
         }
     }
 
@@ -70,7 +78,29 @@ class MainRepository(
         }
     }
 
+    suspend fun getAllPesanan(): Result<List<PesananSampahKeranjangEntity>> {
+        return try {
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.getAllPesananSampahKeranjang("Bearer $token", getPhoneLoggedAccount())
+            if (response.isSuccessful) {
+                val responseBody = response.body() ?: return Result.Error("Response body is null")
 
+                // Mapping dari DTO ke Entitas Room
+                val (keranjangEntities, sampahEntities) = mappingPesanan.mapPesananSampahApiResponseDtoToEntities(responseBody)
+
+                // Simpan data ke database Room (opsional, jika perlu disimpan)
+                withContext(Dispatchers.IO) {
+                    appDatabase.pesananSampahKeranjangDao().insertAllPesananSampahKeranjang(keranjangEntities)
+                    appDatabase.pesananSampahDao().insertAllPesananSampah(sampahEntities)
+                }
+                Result.Success(keranjangEntities)
+            } else {
+                Result.Error("Failed to fetch data: ${response.message()} (${response.code()})")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error occurred: ${e.message}")
+        }
+    }
 
     private suspend fun getAllNasabah(): Result<List<NasabahEntity>> {
         return try {
@@ -93,6 +123,39 @@ class MainRepository(
             }
         } catch (e: Exception) {
             Result.Error("Error occurred: ${e.message}")
+        }
+    }
+
+    suspend fun getCombinedPesananData(): Result<List<CardPesanan>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val combinedData = appDatabase.pesananSampahKeranjangDao().getCombinedPesananData()
+                Result.Success(combinedData)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getPesananSampah(idPesanan: String): Result<List<CardDetailPesanan>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val combinedData = appDatabase.pesananSampahKeranjangDao().getPesananSampah(idPesanan)
+                Result.Success(combinedData)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getDataDetailPesananSampahKeranjang(idPesanan: String): Result<CardPesanan> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val detailPesananSampahKeranjang = appDatabase.pesananSampahKeranjangDao().getDataDetailPesananSampahKeranjang(idPesanan)
+                Result.Success(detailPesananSampahKeranjang)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
         }
     }
 
@@ -290,6 +353,12 @@ class MainRepository(
 
     suspend fun syncData(): Result<Unit> {
         return try {
+            appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
+            appDatabase.pesananSampahDao().deleteAllPesananSampah()
+            appDatabase.nasabahDao().deleteAllNasabah()
+            appDatabase.categoryDao().deleteAllCategory()
+            appDatabase.penarikanDao().deleteAllPenarikan()
+
             val nasabahResult = getAllNasabah()
             if (nasabahResult is Result.Error) {
                 Log.d("cek error sync nasabah", nasabahResult.error)
@@ -306,6 +375,11 @@ class MainRepository(
             if (penarikanResult is Result.Error) {
                 Log.d("tes penarikan result if empy", penarikanResult.error)
                 return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
+            }
+
+            val pesananResult = getAllPesanan()
+            if (pesananResult is Result.Error) {
+                return Result.Error("Failed to sync pesanan: ${pesananResult.error}")
             }
 
             Result.Success(Unit)

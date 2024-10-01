@@ -7,6 +7,7 @@ import com.bs.sriwilis.nasabah.data.response.ChangeProfileResponseDTO
 import com.bs.sriwilis.nasabah.data.response.NasabahResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PenarikanResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PesananSampahItemResponse
+import com.bs.sriwilis.nasabah.data.response.PesananSampahResponseDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -102,6 +103,13 @@ interface ApiServiceMain {
         @Header("Authorization") token: String,
         @Body cartTransactionRequest: CartOrderRequest
     ): Response<PesananSampahItemResponse>
+
+
+    @GET("pesanan/show-all-pesanan-sampah-keranjang/{phone}")
+    suspend fun getAllPesananSampahKeranjang(
+        @Header("Authorization") token: String,
+        @Path("phone") phone: String?
+    ): Response<PesananSampahResponseDTO>
 
 
     // End Of Pesanan Sampah
