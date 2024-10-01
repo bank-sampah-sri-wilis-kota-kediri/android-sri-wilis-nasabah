@@ -25,8 +25,9 @@ interface ApiServiceMain {
 
     // nasabah
 
-    @GET("nasabah/show-all")
-    suspend fun getAllNasabah(
+    @GET("nasabah/{phone}")
+    suspend fun getNasabah(
+        @Path("phone") phone: String?,
         @Header("Authorization") token: String
     ): Response<NasabahResponseDTO>
 

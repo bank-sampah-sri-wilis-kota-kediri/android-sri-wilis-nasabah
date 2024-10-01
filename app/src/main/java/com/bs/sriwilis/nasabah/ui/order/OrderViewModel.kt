@@ -37,6 +37,14 @@ class OrderViewModel(private val repository: MainRepository): ViewModel() {
         }
     }
 
+    suspend fun syncDataPesananSampah(): Result<Unit> {
+        return repository.syncDataPesananSampah()
+    }
+
+    suspend fun syncDataKeranjangTransaksi(): Result<Unit> {
+        return repository.syncDataKeranjangTransaksi()
+    }
+
     suspend fun syncData(): Result<Unit> {
         return repository.syncData()
     }

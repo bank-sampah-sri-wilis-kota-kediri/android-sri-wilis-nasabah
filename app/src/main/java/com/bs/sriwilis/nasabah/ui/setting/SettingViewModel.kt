@@ -37,6 +37,7 @@ class SettingViewModel(private val repository: MainRepository): ViewModel() {
             _changeProfileResult.value = result
 
             if (result is Result.Success) {
+                repository.syncDataNasabah()
                 repository.updatePhoneNumberInDb(name, phone, address, gambar)
             }
         }

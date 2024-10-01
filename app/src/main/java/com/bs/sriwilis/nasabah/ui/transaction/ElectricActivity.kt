@@ -116,7 +116,7 @@ class ElectricActivity : AppCompatActivity() {
 
                 is Result.Success -> {
                     lifecycleScope.launch {
-                        viewModel.syncData()
+                        viewModel.syncDataPenarikan()
                         binding.progressBar.visibility = View.GONE
                         AlertDialog.Builder(this@ElectricActivity).apply {
                             setTitle("Sukses!")

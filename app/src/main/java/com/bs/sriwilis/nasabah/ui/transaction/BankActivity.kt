@@ -127,7 +127,7 @@ class BankActivity : AppCompatActivity() {
 
                 is Result.Success -> {
                     lifecycleScope.launch {
-                        viewModel.syncData()
+                        viewModel.syncDataPenarikan()
                         binding.progressBar.visibility = View.GONE
                         AlertDialog.Builder(this@BankActivity).apply {
                             setTitle("Sukses!")

@@ -74,6 +74,10 @@ class TransactionViewModel(private val repository: MainRepository) : ViewModel()
         }
     }
 
+    suspend fun syncDataPenarikan(): Result<Unit> {
+        return repository.syncDataPenarikan()
+    }
+
     suspend fun syncData(): Result<Unit> {
         return repository.syncData()
     }

@@ -43,7 +43,7 @@ class TransactionWasteActivity : AppCompatActivity() {
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             lifecycleScope.launch {
-                viewModel.syncData()
+                viewModel.syncDataKeranjangTransaksi()
                 viewModel.getCombinedTransactionWaste()
             }
         }

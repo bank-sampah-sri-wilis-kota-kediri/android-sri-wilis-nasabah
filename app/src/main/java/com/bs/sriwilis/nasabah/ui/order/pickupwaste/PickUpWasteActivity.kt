@@ -40,7 +40,7 @@ class PickUpWasteActivity : AppCompatActivity() {
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             lifecycleScope.launch {
-                viewModel.syncData()
+                viewModel.syncDataPesananSampah()
                 viewModel.getCombinedPesananData()
             }
         }
