@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bs.sriwilis.nasabah.data.model.Catalog
 import com.bs.sriwilis.nasabah.data.model.Category
 import com.bs.sriwilis.nasabah.data.model.LoggedAccount
 import com.bs.sriwilis.nasabah.data.repository.MainRepository
@@ -19,12 +20,21 @@ class HomeViewModel(private val repository: MainRepository): ViewModel() {
     private val _categories = MutableLiveData<Result<List<Category>?>>()
     val categories: LiveData<Result<List<Category>?>> get() = _categories
 
+    private val _catalog = MutableLiveData<Result<List<Catalog>?>>()
+    val catalog: LiveData<Result<List<Catalog>?>> get() = _catalog
+
     fun getLoggedInAccount() {
         viewModelScope.launch {
             _loggedInAccount.postValue(Result.Loading)
             val result = repository.getLoggedAccount()
             _loggedInAccount.postValue(result)
         }
+    }
+
+    suspend fun getCatalog() {
+        _catalog.postValue(Result.Loading)
+        val result = repository.getAllCatalogDao()
+        _catalog.postValue(result)
     }
 
     suspend fun syncData(): Result<Unit> {

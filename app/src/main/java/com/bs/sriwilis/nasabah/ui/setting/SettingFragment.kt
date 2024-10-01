@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.FragmentSettingBinding
@@ -43,8 +44,7 @@ class SettingFragment : Fragment() {
                 startActivity(intent)
             }
             cvChangePassword.setOnClickListener {
-                val intent = Intent(context, ChangePasswordActivity::class.java)
-                startActivity(intent)
+                Toast.makeText(requireContext(), "Fitur masih dalam tahap pengembangan", Toast.LENGTH_SHORT)
             }
             cvLogout.setOnClickListener {
                 showLogoutDialog()

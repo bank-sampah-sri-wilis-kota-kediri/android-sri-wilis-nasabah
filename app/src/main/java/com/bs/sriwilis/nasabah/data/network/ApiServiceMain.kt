@@ -2,6 +2,7 @@ package com.bs.sriwilis.nasabah.data.network
 
 import com.bs.sriwilis.nasabah.data.response.AddPenarikanDTO
 import com.bs.sriwilis.nasabah.data.response.CartOrderRequest
+import com.bs.sriwilis.nasabah.data.response.CatalogResponseDTO
 import com.bs.sriwilis.nasabah.data.response.CategoryResponseDTO
 import com.bs.sriwilis.nasabah.data.response.ChangeProfileResponseDTO
 import com.bs.sriwilis.nasabah.data.response.NasabahResponseDTO
@@ -113,4 +114,10 @@ interface ApiServiceMain {
 
 
     // End Of Pesanan Sampah
+
+    //Katalog Sampah
+    @GET("katalog/show-all")
+    suspend fun getAllCatalog(
+        @Header("Authorization") token: String,
+    ): Response<CatalogResponseDTO>
 }

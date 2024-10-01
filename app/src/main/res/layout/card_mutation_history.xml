@@ -40,6 +40,18 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_mutation_title" />
 
         <TextView
+            android:id="@+id/tv_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:text="Token: -"
+            android:textSize="12dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_mutation_date"
+            app:layout_constraintStart_toStartOf="@id/tv_mutation_date"
+            android:visibility="gone"/>
+
+
+        <TextView
             android:id="@+id/tv_mutation_nominal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

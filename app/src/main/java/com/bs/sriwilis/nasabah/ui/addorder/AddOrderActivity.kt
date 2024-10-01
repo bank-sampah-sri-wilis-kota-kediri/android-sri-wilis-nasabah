@@ -158,7 +158,7 @@ class AddOrderActivity : AppCompatActivity() {
                 }
             }
         } else {
-            showToast("Please set location and add items to the cart")
+            showToast("Tolong tambahkan lokasi dan item sampah ke transaksi!")
         }
     }
 
@@ -170,7 +170,7 @@ class AddOrderActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getActualLocation()
             } else {
-                showToast("Location permission denied")
+                showToast("Izin lokasi ditolak!")
             }
         }
     }

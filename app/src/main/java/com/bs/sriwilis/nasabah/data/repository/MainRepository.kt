@@ -1,6 +1,7 @@
 package com.bs.sriwilis.nasabah.data.repository
 
 import android.util.Log
+import com.bs.sriwilis.nasabah.data.mapping.MappingCatalog
 import com.bs.sriwilis.nasabah.data.mapping.MappingCategory
 import com.bs.sriwilis.nasabah.data.mapping.MappingNasabah
 import com.bs.sriwilis.nasabah.data.mapping.MappingPenarikan
@@ -8,6 +9,7 @@ import com.bs.sriwilis.nasabah.data.mapping.MappingPesanan
 import com.bs.sriwilis.nasabah.data.model.CardDetailPesanan
 import com.bs.sriwilis.nasabah.data.model.CardPesanan
 import com.bs.sriwilis.nasabah.data.model.CartOrder
+import com.bs.sriwilis.nasabah.data.model.Catalog
 import com.bs.sriwilis.nasabah.data.model.Category
 import com.bs.sriwilis.nasabah.data.model.LoggedAccount
 import com.bs.sriwilis.nasabah.data.model.PenarikanData
@@ -20,6 +22,7 @@ import com.bs.sriwilis.nasabah.data.response.PesananSampahItem
 import com.bs.sriwilis.nasabah.data.response.PesananSampahItemResponse
 import com.bs.sriwilis.nasabah.data.response.RegisterResponseDTO
 import com.bs.sriwilis.nasabah.data.room.AppDatabase
+import com.bs.sriwilis.nasabah.data.room.entity.CatalogEntity
 import com.bs.sriwilis.nasabah.data.room.entity.CategoryEntity
 import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
@@ -38,6 +41,7 @@ class MainRepository(
     private val mappingKategori = MappingCategory()
     private val mappingPesanan = MappingPesanan()
     private val mappingPenarikan = MappingPenarikan()
+    private val mappingKatalog = MappingCatalog()
 
     suspend fun logout() {
         withContext(Dispatchers.IO) {
@@ -377,6 +381,11 @@ class MainRepository(
                 return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
             }
 
+            val catalogResult = getCatalog()
+            if (catalogResult is Result.Error) {
+                return Result.Error("Failed to sync penarikan: ${catalogResult.error}")
+            }
+
             val pesananResult = getAllPesanan()
             if (pesananResult is Result.Error) {
                 return Result.Error("Failed to sync pesanan: ${pesananResult.error}")
@@ -445,4 +454,42 @@ class MainRepository(
             }
         }
     }
+
+    //catalog
+
+    suspend fun getAllCatalogDao(): Result<List<Catalog>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val categoryData = appDatabase.catalogDao().getAllCatalog()
+                Result.Success(categoryData)
+            } catch (e: Exception) {
+                Result.Error("Error occured: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getCatalog(): Result<List<CatalogEntity>> {
+        return try {
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.getAllCatalog("Bearer $token")
+
+            if (response.isSuccessful) {
+                val responseBody = response.body() ?: return Result.Error("Response body is null")
+
+                val catalogEntities = mappingKatalog.mapCatalogResponseDtoToEntity(responseBody)
+
+                withContext(Dispatchers.IO) {
+                    appDatabase.catalogDao().insert(catalogEntities)
+                }
+
+                Result.Success(catalogEntities)
+            } else {
+                Result.Error("Failed to fetch data: ${response.message()} (${response.code()})")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error occurred: ${e.message}")
+        }
+    }
+
+    //end of catalog
 }
