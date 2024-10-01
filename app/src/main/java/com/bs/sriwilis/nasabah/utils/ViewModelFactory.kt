@@ -12,6 +12,7 @@ import com.bs.sriwilis.nasabah.ui.authorization.AuthViewModel
 import com.bs.sriwilis.nasabah.ui.home.HomeViewModel
 import com.bs.sriwilis.nasabah.ui.order.OrderViewModel
 import com.bs.sriwilis.nasabah.ui.order.pickupwaste.PesananDetailViewModel
+import com.bs.sriwilis.nasabah.ui.order.transactionwaste.TransactionWasteDetailViewModel
 import com.bs.sriwilis.nasabah.ui.setting.SettingViewModel
 import com.bs.sriwilis.nasabah.ui.splashscreen.WelcomeViewModel
 import com.bs.sriwilis.nasabah.ui.transaction.TransactionViewModel
@@ -57,6 +58,10 @@ class ViewModelFactory private constructor(
             modelClass.isAssignableFrom(OrderViewModel::class.java) -> {
                 val repository = InjectionMain.provideRepository(context)
                 OrderViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(TransactionWasteDetailViewModel::class.java) -> {
+                val repository = InjectionMain.provideRepository(context)
+                TransactionWasteDetailViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

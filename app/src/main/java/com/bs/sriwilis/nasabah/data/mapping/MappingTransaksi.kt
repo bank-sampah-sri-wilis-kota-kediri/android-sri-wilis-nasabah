@@ -15,7 +15,7 @@ class MappingTransaksi {
 
         dto.data.forEach { keranjang ->
             val keranjangEntity = KeranjangTransaksiEntity(
-                id_pesanan = keranjang.id_pesanan,
+                id = keranjang.id,
                 id_nasabah = keranjang.id_nasabah,
                 nominal_transaksi = keranjang.nominal_transaksi,
                 tanggal = keranjang.tanggal,
@@ -25,9 +25,10 @@ class MappingTransaksi {
             )
             keranjangEntities.add(keranjangEntity)
 
-            keranjang.transaksi_sampah.forEach { sampah ->
+            keranjang.transaksi_sampah?.forEach { sampah ->
                 val sampahEntity = TransaksiSampahEntity(
-                    id_keranjang_transaksi = keranjang.id_pesanan,
+                    id = sampah.id,
+                    id_keranjang_transaksi = sampah.id_keranjang_transaksi,
                     kategori = sampah.kategori,
                     berat = sampah.berat,
                     harga = sampah.harga,

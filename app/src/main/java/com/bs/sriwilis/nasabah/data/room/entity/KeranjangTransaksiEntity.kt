@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "keranjang_transaksi_table")
 data class KeranjangTransaksiEntity(
-    @PrimaryKey val id_pesanan: String,
+    @PrimaryKey val id: Int,
     val id_nasabah: Int?,
     val nominal_transaksi: String?,
     val tanggal: String?,

@@ -17,7 +17,6 @@ data class CardTransaksi(
     val id: String,
     val nominal_transaksi: String,
     val tanggal: String,
-    val status_transaksi: String,
     val alamat_nasabah: String,
     val nama_nasabah: String,
     val no_hp_nasabah: String,

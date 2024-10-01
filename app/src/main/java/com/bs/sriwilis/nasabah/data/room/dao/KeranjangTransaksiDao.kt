@@ -31,14 +31,14 @@ interface KeranjangTransaksiDao {
        n.no_hp_nasabah as no_hp_nasabah, 
        p.nominal_transaksi, 
        p.tanggal, 
-       p.id_pesanan,
+       p.id,
        n.alamat_nasabah, 
        SUM(ts.berat) AS total_berat
         FROM keranjang_transaksi_table AS p
         JOIN nasabah_table AS n ON p.id_nasabah = n.id
-        JOIN transaksi_sampah_table as ts ON p.id_pesanan = ts.id_keranjang_transaksi
-        WHERE p.id_pesanan = :idPesanan
-        GROUP BY n.id, p.nominal_transaksi, p.tanggal, p.status_transaksi
+        JOIN transaksi_sampah_table as ts ON p.id = ts.id_keranjang_transaksi
+        WHERE p.id = :idPesanan
+        GROUP BY n.id, p.nominal_transaksi, p.tanggal
         """)
     suspend fun getDataDetailKeranjangTransaksi(idPesanan: String): CardTransaksi
 
@@ -67,14 +67,13 @@ interface KeranjangTransaksiDao {
        n.no_hp_nasabah as no_hp_nasabah, 
        p.nominal_transaksi, 
        p.tanggal, 
-       p.id_pesanan,
+       p.id,
        n.alamat_nasabah,
-       p.status_transaksi, 
        SUM(ts.berat) AS total_berat
         FROM keranjang_transaksi_table AS p
         JOIN nasabah_table AS n ON p.id_nasabah = n.id
-        JOIN transaksi_sampah_table as ts ON p.id_pesanan = ts.id_keranjang_transaksi
-        GROUP BY n.id, p.nominal_transaksi, p.tanggal, p.status_transaksi
+        JOIN transaksi_sampah_table as ts ON p.id = ts.id_keranjang_transaksi
+        GROUP BY n.id, p.nominal_transaksi, p.tanggal
         """)
     suspend fun getCombinedTransaksiData(): List<CardTransaksi>
 

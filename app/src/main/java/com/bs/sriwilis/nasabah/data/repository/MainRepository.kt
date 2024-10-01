@@ -54,6 +54,8 @@ class MainRepository(
             appDatabase.pesananSampahDao().deleteAllPesananSampah()
             appDatabase.nasabahDao().deleteAllNasabah()
             appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
+            appDatabase.transaksiSampahDao().deleteAllTransaksiSampah()
+            appDatabase.catalogDao().deleteAllCatalog()
         }
     }
 
@@ -120,7 +122,7 @@ class MainRepository(
 
                 // Mapping dari DTO ke Entitas Room
                 val (keranjangEntities, sampahEntities) = mappingTransaksi.mapTransaksiSampahApiResponseDtoToEntities(responseBody)
-
+                Log.d("cek sampah entities", sampahEntities.toString())
                 // Simpan data ke database Room (opsional, jika perlu disimpan)
                 withContext(Dispatchers.IO) {
                     appDatabase.keranjangTransaksiDao().insertAllKeranjangTransaksi(keranjangEntities)
@@ -421,6 +423,8 @@ class MainRepository(
         return try {
             appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
             appDatabase.pesananSampahDao().deleteAllPesananSampah()
+            appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
+            appDatabase.transaksiSampahDao().deleteAllTransaksiSampah()
             appDatabase.nasabahDao().deleteAllNasabah()
             appDatabase.categoryDao().deleteAllCategory()
             appDatabase.penarikanDao().deleteAllPenarikan()
@@ -451,6 +455,11 @@ class MainRepository(
             val pesananResult = getAllPesanan()
             if (pesananResult is Result.Error) {
                 return Result.Error("Failed to sync pesanan: ${pesananResult.error}")
+            }
+
+            val transaksiResult = getAllTransaksi()
+            if (transaksiResult is Result.Error) {
+                return Result.Error("Failed to sync transaksi: ${transaksiResult.error}")
             }
 
             Result.Success(Unit)
