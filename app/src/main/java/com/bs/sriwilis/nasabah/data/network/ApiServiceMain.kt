@@ -4,6 +4,7 @@ import com.bs.sriwilis.nasabah.data.response.AddPenarikanDTO
 import com.bs.sriwilis.nasabah.data.response.CartOrderRequest
 import com.bs.sriwilis.nasabah.data.response.CategoryResponseDTO
 import com.bs.sriwilis.nasabah.data.response.ChangeProfileResponseDTO
+import com.bs.sriwilis.nasabah.data.response.KeranjangTransaksiResponseDTO
 import com.bs.sriwilis.nasabah.data.response.NasabahResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PenarikanResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PesananSampahItemResponse
@@ -110,6 +111,13 @@ interface ApiServiceMain {
         @Header("Authorization") token: String,
         @Path("phone") phone: String?
     ): Response<PesananSampahResponseDTO>
+
+
+    @GET("transaksi/show-all/{phone}")
+    suspend fun getAllKeranjangTransaksi(
+        @Header("Authorization") token: String,
+        @Path("phone") phone: String?
+    ): Response<KeranjangTransaksiResponseDTO>
 
 
     // End Of Pesanan Sampah

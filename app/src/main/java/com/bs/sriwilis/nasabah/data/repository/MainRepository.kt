@@ -5,8 +5,10 @@ import com.bs.sriwilis.nasabah.data.mapping.MappingCategory
 import com.bs.sriwilis.nasabah.data.mapping.MappingNasabah
 import com.bs.sriwilis.nasabah.data.mapping.MappingPenarikan
 import com.bs.sriwilis.nasabah.data.mapping.MappingPesanan
+import com.bs.sriwilis.nasabah.data.mapping.MappingTransaksi
 import com.bs.sriwilis.nasabah.data.model.CardDetailPesanan
 import com.bs.sriwilis.nasabah.data.model.CardPesanan
+import com.bs.sriwilis.nasabah.data.model.CardTransaksi
 import com.bs.sriwilis.nasabah.data.model.CartOrder
 import com.bs.sriwilis.nasabah.data.model.Category
 import com.bs.sriwilis.nasabah.data.model.LoggedAccount
@@ -25,6 +27,7 @@ import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
 import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilispetugas.data.room.KeranjangTransaksiEntity
 import com.bs.sriwilispetugas.data.room.PesananSampahKeranjangEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,6 +41,7 @@ class MainRepository(
     private val mappingKategori = MappingCategory()
     private val mappingPesanan = MappingPesanan()
     private val mappingPenarikan = MappingPenarikan()
+    private val mappingTransaksi = MappingTransaksi()
 
     suspend fun logout() {
         withContext(Dispatchers.IO) {
@@ -45,6 +49,7 @@ class MainRepository(
             appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
             appDatabase.pesananSampahDao().deleteAllPesananSampah()
             appDatabase.nasabahDao().deleteAllNasabah()
+            appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
         }
     }
 
@@ -102,6 +107,30 @@ class MainRepository(
         }
     }
 
+    suspend fun getAllTransaksi(): Result<List<KeranjangTransaksiEntity>> {
+        return try {
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.getAllKeranjangTransaksi("Bearer $token", getPhoneLoggedAccount())
+            if (response.isSuccessful) {
+                val responseBody = response.body() ?: return Result.Error("Response body is null")
+
+                // Mapping dari DTO ke Entitas Room
+                val (keranjangEntities, sampahEntities) = mappingTransaksi.mapTransaksiSampahApiResponseDtoToEntities(responseBody)
+
+                // Simpan data ke database Room (opsional, jika perlu disimpan)
+                withContext(Dispatchers.IO) {
+                    appDatabase.keranjangTransaksiDao().insertAllKeranjangTransaksi(keranjangEntities)
+                    appDatabase.transaksiSampahDao().insertAllTransaksiSampah(sampahEntities)
+                }
+                Result.Success(keranjangEntities)
+            } else {
+                Result.Error("Failed to fetch data: ${response.message()} (${response.code()})")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error occurred: ${e.message}")
+        }
+    }
+
     private suspend fun getAllNasabah(): Result<List<NasabahEntity>> {
         return try {
             val token = getToken() ?: return Result.Error("Token is null")
@@ -137,10 +166,32 @@ class MainRepository(
         }
     }
 
+    suspend fun getCombinedTransaksiData(): Result<List<CardTransaksi>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val combinedData = appDatabase.keranjangTransaksiDao().getCombinedTransaksiData()
+                Result.Success(combinedData)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
     suspend fun getPesananSampah(idPesanan: String): Result<List<CardDetailPesanan>> {
         return withContext(Dispatchers.IO) {
             try {
                 val combinedData = appDatabase.pesananSampahKeranjangDao().getPesananSampah(idPesanan)
+                Result.Success(combinedData)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getTransaksiSampah(idPesanan: String): Result<List<CardDetailPesanan>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val combinedData = appDatabase.keranjangTransaksiDao().getTransaksiSampah(idPesanan)
                 Result.Success(combinedData)
             } catch (e: Exception) {
                 Result.Error("Error occurred: ${e.message}")
@@ -153,6 +204,17 @@ class MainRepository(
             try {
                 val detailPesananSampahKeranjang = appDatabase.pesananSampahKeranjangDao().getDataDetailPesananSampahKeranjang(idPesanan)
                 Result.Success(detailPesananSampahKeranjang)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getDataDetailKeranjangTransaksi(idPesanan: String): Result<CardTransaksi> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val detailKeranjangTransaksi = appDatabase.keranjangTransaksiDao().getDataDetailKeranjangTransaksi(idPesanan)
+                Result.Success(detailKeranjangTransaksi)
             } catch (e: Exception) {
                 Result.Error("Error occurred: ${e.message}")
             }
