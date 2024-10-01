@@ -13,8 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity.LOCATION_SERVICE
-import androidx.appcompat.widget.PopupMenu
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.R
@@ -23,6 +21,7 @@ import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import kotlinx.coroutines.launch
 import com.bs.sriwilis.nasabah.helper.Result
 import com.bs.sriwilis.nasabah.ui.addorder.AddOrderActivity
+import com.bs.sriwilis.nasabah.ui.home.catalog.CatalogListActivity
 import com.bs.sriwilis.nasabah.ui.home.category.CategoryActivity
 import com.bs.sriwilis.nasabah.ui.setting.profile.ChangeProfileActivity
 import com.bumptech.glide.Glide
@@ -61,6 +60,11 @@ class HomeFragment : Fragment() {
         binding.apply {
             icProfile.setOnClickListener {
                 val intent = Intent(requireContext(), ChangeProfileActivity::class.java)
+                startActivity(intent)
+            }
+
+            cvHomepageGuide1.setOnClickListener {
+                val intent = Intent(requireContext(), CatalogListActivity::class.java)
                 startActivity(intent)
             }
 

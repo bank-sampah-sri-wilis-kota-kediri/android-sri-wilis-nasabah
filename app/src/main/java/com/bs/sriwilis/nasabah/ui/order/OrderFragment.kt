@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bs.sriwilis.nasabah.databinding.FragmentOrderBinding
+import com.bs.sriwilis.nasabah.ui.order.pickupwaste.PesananDetailActivity
 import com.bs.sriwilis.nasabah.ui.order.pickupwaste.PickUpWasteActivity
 import com.bs.sriwilis.nasabah.ui.order.transactionwaste.TransactionWasteActivity
 class OrderFragment : Fragment() {
@@ -27,7 +29,7 @@ class OrderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             cvTransaksiMasuk.setOnClickListener{
-                navigateToTransaksiMasuk()
+                Toast.makeText(requireContext(), "Fitur masih dalam tahap pengembangan", Toast.LENGTH_SHORT)
             }
             cvPenjemputanSampah.setOnClickListener{
                 navigateToPenjemputanPesanan()

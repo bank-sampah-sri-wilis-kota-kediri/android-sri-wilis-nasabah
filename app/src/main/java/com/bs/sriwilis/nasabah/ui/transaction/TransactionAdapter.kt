@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bs.sriwilis.nasabah.data.model.PenarikanData
@@ -25,6 +26,11 @@ class TransactionAdapter(
                 tvMutationDate.text = penarikan?.tanggal.toString()
                 tvMutationNominal.text = "-" + penarikan?.nominal.toString()
                 tvMutationStatus.text = penarikan?.status_penarikan.toString()
+
+                if (penarikan?.jenis_penarikan == "PLN") {
+                    tvToken.visibility = View.VISIBLE
+                    tvToken.text = "Token: -"
+                }
             }
         }
     }
