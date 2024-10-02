@@ -262,5 +262,4 @@ class ChangeProfileActivity : AppCompatActivity() {
         }
     }
 
-    //    End of Function Upload Image
 }

@@ -6,8 +6,10 @@ import com.bs.sriwilis.nasabah.data.mapping.MappingCategory
 import com.bs.sriwilis.nasabah.data.mapping.MappingNasabah
 import com.bs.sriwilis.nasabah.data.mapping.MappingPenarikan
 import com.bs.sriwilis.nasabah.data.mapping.MappingPesanan
+import com.bs.sriwilis.nasabah.data.mapping.MappingTransaksi
 import com.bs.sriwilis.nasabah.data.model.CardDetailPesanan
 import com.bs.sriwilis.nasabah.data.model.CardPesanan
+import com.bs.sriwilis.nasabah.data.model.CardTransaksi
 import com.bs.sriwilis.nasabah.data.model.CartOrder
 import com.bs.sriwilis.nasabah.data.model.Catalog
 import com.bs.sriwilis.nasabah.data.model.Category
@@ -28,6 +30,7 @@ import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
 import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilispetugas.data.room.KeranjangTransaksiEntity
 import com.bs.sriwilispetugas.data.room.PesananSampahKeranjangEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -41,16 +44,50 @@ class MainRepository(
     private val mappingKategori = MappingCategory()
     private val mappingPesanan = MappingPesanan()
     private val mappingPenarikan = MappingPenarikan()
+    private val mappingTransaksi = MappingTransaksi()
     private val mappingKatalog = MappingCatalog()
 
-    suspend fun logout() {
-        withContext(Dispatchers.IO) {
-            appDatabase.loginResponseDao().deleteAll()
-            appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
-            appDatabase.pesananSampahDao().deleteAllPesananSampah()
-            appDatabase.nasabahDao().deleteAllNasabah()
+    suspend fun logoutApi(token: String): Result<RegisterResponseDTO> {
+        return try {
+            val response = apiService.logout("Bearer $token")
+            Log.d("response body logout", response.body().toString())
+            if (response.isSuccessful) {
+                val registerResponseDTO = response.body()
+                if (registerResponseDTO != null) {
+                    Result.Success(registerResponseDTO)
+                } else {
+                    Result.Error("Empty Response Body")
+                }
+            } else {
+                Result.Error("Failed to Register: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error: ${e.message}")
         }
     }
+
+    suspend fun logout() {
+        val token = getToken() ?: ""
+        withContext(Dispatchers.IO) {
+            try {
+                appDatabase.loginResponseDao().deleteAll()
+                appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
+                appDatabase.pesananSampahDao().deleteAllPesananSampah()
+                appDatabase.nasabahDao().deleteAllNasabah()
+                appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
+                appDatabase.transaksiSampahDao().deleteAllTransaksiSampah()
+                appDatabase.catalogDao().deleteAllCatalog()
+                appDatabase.categoryDao().deleteAllCategory()
+                appDatabase.penarikanDao().deleteAllPenarikan()
+
+                logoutApi(token)
+            } catch (e: Exception) {
+                Log.e("Logout Error", "Error during logout: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
 
     suspend fun getToken(): String? {
         val loginResponse = appDatabase.loginResponseDao().getLoginResponseById(1)
@@ -106,11 +143,35 @@ class MainRepository(
         }
     }
 
-    private suspend fun getAllNasabah(): Result<List<NasabahEntity>> {
+    suspend fun getAllTransaksi(): Result<List<KeranjangTransaksiEntity>> {
         return try {
             val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.getAllKeranjangTransaksi("Bearer $token", getPhoneLoggedAccount())
+            if (response.isSuccessful) {
+                val responseBody = response.body() ?: return Result.Error("Response body is null")
 
-            val response = apiService.getAllNasabah("Bearer $token")
+                // Mapping dari DTO ke Entitas Room
+                val (keranjangEntities, sampahEntities) = mappingTransaksi.mapTransaksiSampahApiResponseDtoToEntities(responseBody)
+                Log.d("cek sampah entities", sampahEntities.toString())
+                // Simpan data ke database Room (opsional, jika perlu disimpan)
+                withContext(Dispatchers.IO) {
+                    appDatabase.keranjangTransaksiDao().insertAllKeranjangTransaksi(keranjangEntities)
+                    appDatabase.transaksiSampahDao().insertAllTransaksiSampah(sampahEntities)
+                }
+                Result.Success(keranjangEntities)
+            } else {
+                Result.Error("Failed to fetch data: ${response.message()} (${response.code()})")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error occurred: ${e.message}")
+        }
+    }
+
+    private suspend fun getNasabah(): Result<List<NasabahEntity>> {
+        return try {
+            val token = getToken() ?: return Result.Error("Token is null")
+            val phone = getPhoneLoggedAccount()
+            val response = apiService.getNasabah(phone,"Bearer $token")
 
             if (response.isSuccessful) {
                 val responseBody = response.body() ?: return Result.Error("Response body is null")
@@ -141,10 +202,32 @@ class MainRepository(
         }
     }
 
+    suspend fun getCombinedTransaksiData(): Result<List<CardTransaksi>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val combinedData = appDatabase.keranjangTransaksiDao().getCombinedTransaksiData()
+                Result.Success(combinedData)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
     suspend fun getPesananSampah(idPesanan: String): Result<List<CardDetailPesanan>> {
         return withContext(Dispatchers.IO) {
             try {
                 val combinedData = appDatabase.pesananSampahKeranjangDao().getPesananSampah(idPesanan)
+                Result.Success(combinedData)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getTransaksiSampah(idPesanan: String): Result<List<CardDetailPesanan>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val combinedData = appDatabase.keranjangTransaksiDao().getTransaksiSampah(idPesanan)
                 Result.Success(combinedData)
             } catch (e: Exception) {
                 Result.Error("Error occurred: ${e.message}")
@@ -157,6 +240,17 @@ class MainRepository(
             try {
                 val detailPesananSampahKeranjang = appDatabase.pesananSampahKeranjangDao().getDataDetailPesananSampahKeranjang(idPesanan)
                 Result.Success(detailPesananSampahKeranjang)
+            } catch (e: Exception) {
+                Result.Error("Error occurred: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun getDataDetailKeranjangTransaksi(idPesanan: String): Result<CardTransaksi> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val detailKeranjangTransaksi = appDatabase.keranjangTransaksiDao().getDataDetailKeranjangTransaksi(idPesanan)
+                Result.Success(detailKeranjangTransaksi)
             } catch (e: Exception) {
                 Result.Error("Error occurred: ${e.message}")
             }
@@ -186,6 +280,32 @@ class MainRepository(
             } else {
                 Log.d("cek change profile error", response.code().toString())
                 Result.Error("Failed to Change Profile: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Error: ${e.message}")
+        }
+    }
+
+    suspend fun changePassword(oldPassword: String, newPassword: String): Result<ChangeProfileResponseDTO> {
+        return try {
+            val phone = getPhoneLoggedAccount()
+            val token = getToken() ?: return Result.Error("Token is null")
+            val response = apiService.editPassword(phone, "Bearer $token" , oldPassword, newPassword)
+
+            if (response.isSuccessful) {
+                val changeProfileResponseDTO = response.body()
+                if (changeProfileResponseDTO != null) {
+                    Result.Success(changeProfileResponseDTO)
+                } else {
+                    Result.Error("Empty Response Body")
+                }
+            } else {
+                when {
+                    response.code() == 400 -> {
+                        Result.Error("kata sandi lama tidak cocok")
+                    }
+                    else -> {Result.Error("Failed to Change Password: ${response.code()}")}
+                }
             }
         } catch (e: Exception) {
             Result.Error("Error: ${e.message}")
@@ -351,21 +471,114 @@ class MainRepository(
         }
     }
 
-
-
     // end of penarikan
+
+    suspend fun syncDataKeranjangTransaksi(): Result<Unit> {
+        return try {
+            appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
+            appDatabase.transaksiSampahDao().deleteAllTransaksiSampah()
+
+            val transaksiResult = getAllTransaksi()
+            if (transaksiResult is Result.Error) {
+                return Result.Error("Failed to sync transaksi: ${transaksiResult.error}")
+            }
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
+    suspend fun syncDataPesananSampah(): Result<Unit> {
+        return try {
+            appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
+            appDatabase.pesananSampahDao().deleteAllPesananSampah()
+
+            val pesananResult = getAllPesanan()
+            if (pesananResult is Result.Error) {
+                return Result.Error("Failed to sync pesanan: ${pesananResult.error}")
+            }
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
+    suspend fun syncDataPenarikan(): Result<Unit> {
+        return try {
+            appDatabase.penarikanDao().deleteAllPenarikan()
+
+            val penarikanResult = getPenarikan()
+            if (penarikanResult is Result.Error) {
+                return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
+            }
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
+    suspend fun  syncDataCategory(): Result<Unit> {
+        return try {
+            appDatabase.categoryDao().deleteAllCategory()
+
+            val categoryResult = getCategory()
+            if (categoryResult is Result.Error) {
+                return Result.Error("Failed to sync penarikan: ${categoryResult.error}")
+            }
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
+    suspend fun  syncDataCatalog(): Result<Unit> {
+        return try {
+            appDatabase.catalogDao().deleteAllCatalog()
+
+            val catalogResult = getCatalog()
+            if (catalogResult is Result.Error) {
+                return Result.Error("Failed to sync penarikan: ${catalogResult.error}")
+            }
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
+
+    suspend fun syncDataNasabah(): Result<Unit> {
+        return try {
+            appDatabase.nasabahDao().deleteAllNasabah()
+
+            val nasabahResult = getNasabah()
+            if (nasabahResult is Result.Error) {
+                return Result.Error("Failed to sync nasabah: ${nasabahResult.error}")
+            }
+            syncLoggedAccount()
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Error occurred during synchronization: ${e.message}")
+        }
+    }
 
     suspend fun syncData(): Result<Unit> {
         return try {
             appDatabase.pesananSampahKeranjangDao().deleteAllPesananSampahKeranjang()
             appDatabase.pesananSampahDao().deleteAllPesananSampah()
+            appDatabase.keranjangTransaksiDao().deleteAllKeranjangTransaksi()
+            appDatabase.transaksiSampahDao().deleteAllTransaksiSampah()
             appDatabase.nasabahDao().deleteAllNasabah()
             appDatabase.categoryDao().deleteAllCategory()
+            appDatabase.catalogDao().deleteAllCatalog()
             appDatabase.penarikanDao().deleteAllPenarikan()
 
-            val nasabahResult = getAllNasabah()
+            val nasabahResult = getNasabah()
             if (nasabahResult is Result.Error) {
-                Log.d("cek error sync nasabah", nasabahResult.error)
                 return Result.Error("Failed to sync nasabah: ${nasabahResult.error}")
             }
             syncLoggedAccount()
@@ -377,7 +590,6 @@ class MainRepository(
 
             val penarikanResult = getPenarikan()
             if (penarikanResult is Result.Error) {
-                Log.d("tes penarikan result if empy", penarikanResult.error)
                 return Result.Error("Failed to sync penarikan: ${penarikanResult.error}")
             }
 
@@ -391,21 +603,21 @@ class MainRepository(
                 return Result.Error("Failed to sync pesanan: ${pesananResult.error}")
             }
 
+            val transaksiResult = getAllTransaksi()
+            if (transaksiResult is Result.Error) {
+                return Result.Error("Failed to sync transaksi: ${transaksiResult.error}")
+            }
+
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error("Error occurred during synchronization: ${e.message}")
         }
     }
 
-    suspend fun addCartOrder(
-        lat: String,
-        long: String,
-        pesanan_sampah: List<CartOrder> // Keep using CartTransaction
-    ): Result<PesananSampahItemResponse?> {
+    suspend fun addCartOrder(lat: String, long: String, pesanan_sampah: List<CartOrder>): Result<PesananSampahItemResponse?> {
 
         val token = getToken() ?: return Result.Error("Token is null")
         return try {
-            // Prepare the transaction items for the request
             val pesananSampahItems = pesanan_sampah.map { cartTransaction ->
                 PesananSampahItem(
                     gambar = cartTransaction.gambar,

@@ -36,12 +36,11 @@ class PickUpWasteActivity : AppCompatActivity() {
 
         binding.btnBack.setOnClickListener{
             onBackPressed()
-            Log.d("cek keklik","keklik cuy")
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             lifecycleScope.launch {
-                viewModel.syncData()
+                viewModel.syncDataPesananSampah()
                 viewModel.getCombinedPesananData()
             }
         }
@@ -91,7 +90,7 @@ class PickUpWasteActivity : AppCompatActivity() {
             this,
             object : PickUpAdapter.OnApproveClickListener {
                 override fun onApproveClick(idPesanan: String) {
-                    //
+
                 }
 
             }

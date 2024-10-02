@@ -29,7 +29,7 @@ class OrderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             cvTransaksiMasuk.setOnClickListener{
-                Toast.makeText(requireContext(), "Fitur masih dalam tahap pengembangan", Toast.LENGTH_SHORT)
+                navigateToTransaksiMasuk()
             }
             cvPenjemputanSampah.setOnClickListener{
                 navigateToPenjemputanPesanan()

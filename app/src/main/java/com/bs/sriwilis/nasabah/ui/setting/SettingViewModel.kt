@@ -22,6 +22,9 @@ class SettingViewModel(private val repository: MainRepository): ViewModel() {
     private val _changeProfileResult = MutableLiveData<Result<ChangeProfileResponseDTO>>()
     val changeProfileResult: LiveData<Result<ChangeProfileResponseDTO>> = _changeProfileResult
 
+    private val _changePasswordResult = MutableLiveData<Result<ChangeProfileResponseDTO>>()
+    val changePasswordResult: LiveData<Result<ChangeProfileResponseDTO>> = _changePasswordResult
+
     fun getLoggedInAccount() {
         viewModelScope.launch {
             _loggedInAccount.postValue(Result.Loading)
@@ -37,8 +40,17 @@ class SettingViewModel(private val repository: MainRepository): ViewModel() {
             _changeProfileResult.value = result
 
             if (result is Result.Success) {
+                repository.syncDataNasabah()
                 repository.updatePhoneNumberInDb(name, phone, address, gambar)
             }
+        }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String) {
+        viewModelScope.launch {
+            _changePasswordResult.value = Result.Loading
+            val result = repository.changePassword(oldPassword, newPassword)
+            _changePasswordResult.value = result
         }
     }
 

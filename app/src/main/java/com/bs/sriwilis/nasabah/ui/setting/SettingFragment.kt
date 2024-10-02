@@ -44,7 +44,8 @@ class SettingFragment : Fragment() {
                 startActivity(intent)
             }
             cvChangePassword.setOnClickListener {
-                Toast.makeText(requireContext(), "Fitur masih dalam tahap pengembangan", Toast.LENGTH_SHORT)
+                val intent = Intent(context, ChangePasswordActivity::class.java)
+                startActivity(intent)
             }
             cvLogout.setOnClickListener {
                 showLogoutDialog()

@@ -15,4 +15,7 @@ interface CatalogDao {
 
     @Query("SELECT * FROM catalog_table")
     suspend fun getAllCatalog(): List<Catalog>
+
+    @Query("DELETE FROM catalog_table")
+    suspend fun deleteAllCatalog()
 }
