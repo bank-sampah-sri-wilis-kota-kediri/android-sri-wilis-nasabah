@@ -10,6 +10,7 @@ import com.bs.sriwilis.nasabah.data.response.NasabahResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PenarikanResponseDTO
 import com.bs.sriwilis.nasabah.data.response.PesananSampahItemResponse
 import com.bs.sriwilis.nasabah.data.response.PesananSampahResponseDTO
+import com.bs.sriwilis.nasabah.data.response.RegisterResponseDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -40,6 +41,15 @@ interface ApiServiceMain {
         @Field("no_hp_nasabah") no_hp_nasabah: String?,
         @Field("alamat_nasabah") alamat_nasabah: String?,
         @Field("gambar_nasabah") gambar_nasabah: String?
+    ): Response<ChangeProfileResponseDTO>
+
+    @FormUrlEncoded
+    @PUT("nasabah/edit-by-phone/{phone}")
+    suspend fun editPassword(
+        @Path("phone") phone: String?,
+        @Header("Authorization") token: String,
+        @Field("old_password_nasabah") old_password: String?,
+        @Field("password_nasabah") password_nasabah: String?
     ): Response<ChangeProfileResponseDTO>
 
     // end of nasabah
@@ -129,4 +139,12 @@ interface ApiServiceMain {
     suspend fun getAllCatalog(
         @Header("Authorization") token: String,
     ): Response<CatalogResponseDTO>
+
+
+    // logout
+    @Headers("Content-type: application/json")
+    @POST("nasabah/logout")
+    suspend fun logout(
+        @Header("Authorization") token: String,
+    ): Response<RegisterResponseDTO>
 }
