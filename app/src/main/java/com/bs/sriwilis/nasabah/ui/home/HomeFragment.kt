@@ -74,6 +74,13 @@ class HomeFragment : Fragment() {
             }
         }
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.syncData()
+                viewModel.getLoggedInAccount()
+            }
+        }
+
         binding.btnStartRecycle.setOnClickListener {
              checkIfLocationEnabledAndProceed()
         }
@@ -94,6 +101,7 @@ class HomeFragment : Fragment() {
         viewModel.loggedInAccount.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     val loggedAccount = result.data
                     val doubleBalance = loggedAccount?.saldo_nasabah?.toDoubleOrNull() ?: 0.0
                     val intBalance = doubleBalance.toInt()

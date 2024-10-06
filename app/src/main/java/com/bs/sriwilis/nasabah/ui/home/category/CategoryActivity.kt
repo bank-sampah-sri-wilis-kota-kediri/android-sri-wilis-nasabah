@@ -32,20 +32,24 @@ class CategoryActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        categoryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                lifecycleScope.launch {
-                    viewModel.filterData("semua")
-                }
-            }
-        }
+        super.onCreate(savedInstanceState)
 
         binding = ActivityCategoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         categoryAdapter = CategoryAdapter(emptyList(), this)
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.syncDataCategory()
+                viewModel.filterData("semua")
+                observeViewModel()
+            }
+
+        }
+
         lifecycleScope.launch {
+            viewModel.filterData("semua")
             observeViewModel()
         }
 
@@ -59,8 +63,6 @@ class CategoryActivity : AppCompatActivity() {
             onBackPressed()
             finish()
         }
-
-        super.onCreate(savedInstanceState)
     }
 
     private fun showPopupMenu(view: View) {
@@ -99,6 +101,7 @@ class CategoryActivity : AppCompatActivity() {
         viewModel.categories.observe(this) { result ->
             when (result) {
                 is Result.Success -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.GONE
                     val categoryDetails = result.data
                     if (categoryDetails != null) {

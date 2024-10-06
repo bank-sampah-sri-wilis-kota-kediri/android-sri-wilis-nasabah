@@ -1,11 +1,14 @@
 package com.bs.sriwilis.nasabah.ui.transaction
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bs.sriwilis.nasabah.data.model.PenarikanData
 import com.bs.sriwilis.nasabah.databinding.CardMutationHistoryBinding
@@ -27,9 +30,16 @@ class TransactionAdapter(
                 tvMutationNominal.text = "-" + penarikan?.nominal.toString()
                 tvMutationStatus.text = penarikan?.status_penarikan.toString()
 
-                if (penarikan?.jenis_penarikan == "PLN") {
+                if (penarikan?.jenis_penarikan == "PLN" && penarikan.nomor_token != null) {
                     tvToken.visibility = View.VISIBLE
-                    tvToken.text = "Token: -"
+                    tvToken.text = "Token: ${penarikan.nomor_token}"
+
+                    root.setOnClickListener{
+                        showTokenPopup(penarikan.nomor_token)
+                    }
+                }else{
+                    tvToken.visibility = View.GONE
+                    root.setOnClickListener(null)
                 }
             }
         }
@@ -54,5 +64,26 @@ class TransactionAdapter(
         this.penarikan = newPenarikans
         notifyDataSetChanged()
     }
+
+    private fun showTokenPopup(token: String?) {
+        val builder = android.app.AlertDialog.Builder(context)
+        builder.setTitle("Token PLN Anda")
+        builder.setMessage("$token")
+
+        builder.setNeutralButton("Salin Token") { _, _ ->
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Token PLN", token)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(context, "Token disalin ke clipboard", Toast.LENGTH_SHORT).show()
+        }
+
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
 
 }
