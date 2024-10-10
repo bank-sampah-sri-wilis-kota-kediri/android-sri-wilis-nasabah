@@ -48,7 +48,6 @@ class WelcomeActivity : AppCompatActivity() {
         if (token != null) {
             when(val result = viewModel.syncData()){
                 is Result.Loading -> {
-                    Log.d("Sync Data", "Loading...")
                 }
                 is Result.Success -> {
                     navigateToHome()

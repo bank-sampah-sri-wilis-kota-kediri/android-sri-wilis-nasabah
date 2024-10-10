@@ -9,6 +9,7 @@ data class PenarikanData(
     val nomor_meteran: String?,
     val nomor_rekening: String?,
     val jenis_bank: String?,
+    val keterangan: String?,
     val nomor_token: String?,
     val status_penarikan: String
 )

@@ -8,7 +8,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityDetailPickUpBinding
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import com.bs.sriwilis.nasabah.helper.Result
@@ -63,6 +65,20 @@ class PesananDetailActivity : AppCompatActivity() {
                         binding.tvBeratDetailPesanan.text = "${detail.total_berat} Kg"
                         binding.tvNomorwaDetailPesanan.text = detail.no_hp_nasabah
                         binding.tvStatusPesanan.text = detail.status_pesanan
+
+                        if(detail.status_pesanan.lowercase() == "selesai diantar"){
+                            binding.tvStatusPesanan.text = "Selesai"
+                            binding.tvStatusPesanan.setBackgroundColor(ContextCompat.getColor(this, R.color.green_label))
+                        }else if(detail.status_pesanan.lowercase() == "pending"){
+                            binding.tvStatusPesanan.text = "Pending"
+                            binding.tvStatusPesanan.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_primary))
+                        }else if(detail.status_pesanan.lowercase() == "sudah dijadwalkan"){
+                            binding.tvStatusPesanan.text = "Diproses"
+                            binding.tvStatusPesanan.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_calm))
+                        }else{
+                            binding.tvStatusPesanan.text = "Gagal"
+                            binding.tvStatusPesanan.setBackgroundColor(ContextCompat.getColor(this, R.color.red_primary))
+                        }
 
                         binding.btnMapsDetailPesanan.setOnClickListener {
                             openMaps(detail.lat.toDouble(), detail.lng.toDouble())

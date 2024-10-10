@@ -104,8 +104,6 @@ class AddCartOrderActivity : AppCompatActivity() {
         val totalWeight = cartTransactions.sumOf { it.berat_perkiraan }
         val totalPrice = cartTransactions.sumOf { it.harga_perkiraan }
 
-        Log.d("CartTransaction", "Added: $cartTransaction")
-
         val intent = Intent().apply {
             putParcelableArrayListExtra("transaksi_sampah", ArrayList(cartTransactions))
             putExtra("total_weight", totalWeight)
@@ -156,7 +154,6 @@ class AddCartOrderActivity : AppCompatActivity() {
                 }
 
                 Result.Loading -> {
-                    // Show loading indicator
                 }
             }
         }

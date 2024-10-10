@@ -33,7 +33,7 @@ class CatalogAdapter(
 
     inner class CatalogViewHolder(private val binding: CardWasteCatalogBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("SetTextI18n")
+        @SuppressLint("SetTextI18n", "QueryPermissionsNeeded")
         fun bind(catalog: Catalog?) {
             with(binding) {
                 catalog?.gambar_katalog?.let { gambarKatalog ->
@@ -55,7 +55,6 @@ class CatalogAdapter(
                         try {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(shopeeLink))
 
-                            // Check if there's an app that can handle the intent (like a browser)
                             if (intent.resolveActivity(itemView.context.packageManager) != null) {
                                 itemView.context.startActivity(intent)
                             } else {
@@ -77,8 +76,6 @@ class CatalogAdapter(
                         try {
                             val uri = Uri.parse("https://wa.me/62$phoneNumber?text=" + Uri.encode(message))
                             val intent = Intent(Intent.ACTION_VIEW, uri)
-
-                            // Check if WhatsApp is installed
                             try {
                                 itemView.context.packageManager.getPackageInfo("com.whatsapp", 0)
                                 itemView.context.startActivity(intent)

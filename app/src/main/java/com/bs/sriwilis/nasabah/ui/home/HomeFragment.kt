@@ -29,6 +29,7 @@ import com.bumptech.glide.signature.ObjectKey
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.DecimalFormat
 
 @Suppress("DEPRECATION")
 class HomeFragment : Fragment() {
@@ -105,7 +106,8 @@ class HomeFragment : Fragment() {
                     val loggedAccount = result.data
                     val doubleBalance = loggedAccount?.saldo_nasabah?.toDoubleOrNull() ?: 0.0
                     val intBalance = doubleBalance.toInt()
-                    val formattedBalance = "Rp $intBalance"
+                    val formatter = DecimalFormat("#,###")
+                    val formattedBalance = "Rp " + formatter.format(intBalance)
                     binding.tvBalance.text = formattedBalance
 
                     if (loggedAccount != null) {
@@ -130,7 +132,6 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(), "Gagal memuat data: ${result.error}", Toast.LENGTH_SHORT).show()
                 }
                 is Result.Loading -> {
-                    Log.d("Loading", "Loading")
                 }
             }
         }

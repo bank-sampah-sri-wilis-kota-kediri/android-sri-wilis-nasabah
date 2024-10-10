@@ -110,7 +110,6 @@ class PickUpWasteActivity : AppCompatActivity() {
                     Toast.makeText(this, "Gagal memuat data: ${result.error}", Toast.LENGTH_SHORT).show()
                 }
                 is Result.Loading -> {
-                    Log.d("Loading", "Loading")
                 }
             }
         }

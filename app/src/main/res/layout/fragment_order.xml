@@ -73,7 +73,7 @@
                 android:layout_gravity="center|start"
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/inter_bold"
-                android:text="Transaksi Sampah Berhasil"
+                android:text="Transaksi Sampah"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
         </androidx.cardview.widget.CardView>
