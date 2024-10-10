@@ -26,6 +26,7 @@ import com.bs.sriwilis.nasabah.ui.setting.SettingViewModel
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 
 class TransactionFragment : Fragment() {
     private var _binding: FragmentTransactionBinding? = null
@@ -54,6 +55,16 @@ class TransactionFragment : Fragment() {
 
         lifecycleScope.launch {
             observeViewModel()
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.syncDataPenarikan()
+                viewModel.syncNasabah()
+                viewModel.filterDataTransaction(selectedTabOption, selectedJenisPenarikan)
+                homeViewModel.getLoggedInAccount()
+                observeViewModel()
+            }
         }
 
         lifecycleScope.launch {
@@ -130,12 +141,20 @@ class TransactionFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.penarikans.observe(viewLifecycleOwner) { result ->
+            binding.swipeRefreshLayout.isRefreshing = false
             when (result) {
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val penarikanDetails = result.data
                     if (penarikanDetails != null) {
-                        transactionAdapter.updateTransaction(penarikanDetails)
+                        if (penarikanDetails.isNotEmpty()) {
+                            binding.rvMutationHistory.visibility = View.VISIBLE
+                            binding.tvNoContent.visibility = View.GONE
+                            transactionAdapter.updateTransaction(penarikanDetails)
+                        }else{
+                            binding.rvMutationHistory.visibility = View.GONE
+                            binding.tvNoContent.visibility = View.VISIBLE
+                        }
                     }
                 }
                 is Result.Error -> {
@@ -150,7 +169,6 @@ class TransactionFragment : Fragment() {
                 }
                 is Result.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
-                    Log.d("Loading", "Loading")
                 }
             }
         }
@@ -161,14 +179,14 @@ class TransactionFragment : Fragment() {
                     val loggedAccount = result.data
                     val doubleBalance = loggedAccount?.saldo_nasabah?.toDoubleOrNull() ?: 0.0
                     val intBalance = doubleBalance.toInt()
-                    val formattedBalance = "Rp $intBalance"
+                    val formatter = DecimalFormat("#,###")
+                    val formattedBalance = "Rp " + formatter.format(intBalance)
                     binding.tvMutationBalance.text = formattedBalance
                 }
                 is Result.Error -> {
                     Toast.makeText(requireContext(), "Gagal memuat data: ${result.error}", Toast.LENGTH_SHORT).show()
                 }
                 is Result.Loading -> {
-                    Log.d("Loading", "Loading")
                 }
             }
         }

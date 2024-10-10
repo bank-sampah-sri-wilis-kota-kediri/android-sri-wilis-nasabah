@@ -15,5 +15,7 @@ data class PenarikanEntity(
     val nomor_meteran: Long?,
     val nomor_rekening: Long?,
     val jenis_bank: String?,
+    val nomor_token: String?,
+    val keterangan: String?,
     val status_penarikan: String
 )

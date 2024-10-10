@@ -42,11 +42,16 @@ class CatalogListActivity : AppCompatActivity() {
 
         catalogAdapter = CatalogAdapter(emptyList(), this)
 
-        lifecycleScope.launch {
-            viewModel.getCatalog()
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.syncDataCatalog()
+                viewModel.getCatalog()
+                observeViewModel()
+            }
         }
 
         lifecycleScope.launch {
+            viewModel.getCatalog()
             observeViewModel()
         }
 
@@ -67,6 +72,7 @@ class CatalogListActivity : AppCompatActivity() {
         viewModel.catalog.observe(this) { result ->
             when (result) {
                 is Result.Success -> {
+                    binding.swipeRefreshLayout.isRefreshing = false
                     binding.progressBar.visibility = View.GONE
                     val catalogDetails = result.data
                     if (catalogDetails != null) {

@@ -22,9 +22,11 @@ import android.util.Base64
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.data.model.LoggedAccount
+import com.bs.sriwilis.nasabah.ui.HomepageActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
 import com.yalantis.ucrop.UCrop
@@ -139,7 +141,15 @@ class ChangeProfileActivity : AppCompatActivity() {
             when (result) {
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                    AlertDialog.Builder(this).apply {
+                        setTitle("Sukses")
+                        setMessage("Profil berhasil diubah.")
+                        setPositiveButton("OK") { _, _ ->
+                            finish()
+                        }
+                        create()
+                        show()
+                    }
                 }
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE

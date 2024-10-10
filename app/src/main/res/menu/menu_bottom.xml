@@ -9,7 +9,7 @@
 
         android:icon="@drawable/ic_menu2"
         android:id="@+id/order"
-        android:title="@string/btn_order"
+        android:title="@string/btn_mutation"
         />
     <item
         android:id="@+id/placeholder"
@@ -18,7 +18,7 @@
     <item
         android:id="@+id/transaction"
         android:icon="@drawable/ic_menu3"
-        android:title="@string/btn_mutation"
+        android:title="Saldo"
         />
     <item
         android:icon="@drawable/ic_menu4"

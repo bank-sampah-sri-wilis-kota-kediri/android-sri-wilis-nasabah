@@ -26,7 +26,7 @@
     <string name="tv_homepage_order_take">Pesan Pengambilan</string>
     <string name="tv_homepage_title1">Panduan Penjualan Sampah</string>
     <string name="tv_homepage_title1_desc">Cara Menggunakan Aplikasi</string>
-    <string name="tv_homepage_title2_desc">Kategori Sampah Yang Dapat Diubah</string>
+    <string name="tv_homepage_title2_desc">Kategori Sampah</string>
     <string name="tv_detail_order_title">Detail Pesanan</string>
     <string name="tv_detail_order_waste_category">Jenis Sampah</string>
     <string name="tv_detail_order_weight_estimation">Estimasi Berat</string>
@@ -48,7 +48,7 @@
     <string name="tv_mutation_balance">Saldo Bank Sampah</string>
     <string name="tv_available_balance">Saldo Tersedia</string>
     <string name="tv_transfer_limit">Limit Transfer</string>
-    <string name="tv_transaction_history">Riwayat Transaksi</string>
+    <string name="tv_transaction_history">Riwayat Penarikan</string>
     <string name="tv_enter_nominal">Masukkan Nominal Penarikan</string>
     <string name="tv_settings_title">Pengaturan</string>
     <string name="tv_settings_subtitle1">Ubah Profil</string>

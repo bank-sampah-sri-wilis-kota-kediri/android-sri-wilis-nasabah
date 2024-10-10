@@ -17,6 +17,8 @@ class MappingPenarikan {
                 nomor_meteran = penarikan.nomor_meteran,
                 nomor_rekening = penarikan.nomor_rekening,
                 jenis_bank = penarikan.jenis_bank,
+                nomor_token = penarikan.nomor_token,
+                keterangan = penarikan.keterangan,
                 status_penarikan = penarikan.status_penarikan
             )
             penarikanEntities.add(penarikanEntity)

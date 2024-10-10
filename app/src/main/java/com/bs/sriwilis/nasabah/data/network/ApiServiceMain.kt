@@ -25,7 +25,7 @@ import retrofit2.http.Path
 interface ApiServiceMain {
 
     // nasabah
-
+    @Headers("Content-Type: application/json")
     @GET("nasabah/{phone}")
     suspend fun getNasabah(
         @Path("phone") phone: String?,

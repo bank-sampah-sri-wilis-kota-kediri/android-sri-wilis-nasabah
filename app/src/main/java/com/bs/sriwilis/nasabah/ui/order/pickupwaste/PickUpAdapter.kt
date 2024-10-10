@@ -29,7 +29,7 @@ class PickUpAdapter(
             with(binding) {
                 tvNomorWaPesanan.text = pesanan.no_hp_nasabah
                 tvTanggalPesanan.text = convertDateToText(pesanan.tanggal)
-                val totalBerat = pesanan.total_berat
+                val totalBerat = "${pesanan.total_berat} Kg"
                 tvBeratTransaksi.text = totalBerat.toString()
 
                 tvNamaPesanan.text = pesanan.nama_nasabah ?: "Nama tidak ditemukan"
@@ -86,24 +86,25 @@ class PickUpAdapter(
     }
 
     private fun convertDateToText(date: String): String {
-        // Example function to convert date to a string with month name
         // Assuming input date format is "yyyy-MM-dd"
         val months = arrayOf(
             "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
             "September", "Oktober", "November", "Desember"
         )
+
         val parts = date.split("-")
+        val year = parts[0].toInt()
+
+        if (year < 2000) {
+            return "Belum dijadwalkan"
+        }
+
         val day = parts[2]
         val month = months[parts[1].toInt() - 1]
-        val year = parts[0]
+
         return "$day $month $year"
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updatePesanan(newPesanans: List<CardPesanan>) {
-        this.pesanans = newPesanans
-        notifyDataSetChanged()
-    }
 
 
 

@@ -9,6 +9,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AlertDialog.*
 import androidx.appcompat.app.AppCompatActivity
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityChangePasswordBinding
@@ -38,14 +40,14 @@ class ChangePasswordActivity : AppCompatActivity() {
         observeViewModel()
 
         setupPasswordToggle()
-        setupTextWatchers() // Memantau input teks
+        setupTextWatchers()
 
         binding.btnChangeProfile.setOnClickListener {
             handleChangePassword()
         }
 
-        // Disable tombol pada awalnya
         binding.btnChangeProfile.isEnabled = false
+        binding.btnChangeProfile.setBackgroundColor(getColor(R.color.grey_primary))
     }
 
     private fun observeViewModel() {
@@ -53,7 +55,15 @@ class ChangePasswordActivity : AppCompatActivity() {
             when (result) {
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Password berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                    Builder(this).apply {
+                        setTitle("Sukses")
+                        setMessage("Password berhasil diubah.")
+                        setPositiveButton("OK") { _, _ ->
+                            finish()
+                        }
+                        create()
+                        show()
+                    }
                 }
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -101,13 +111,17 @@ class ChangePasswordActivity : AppCompatActivity() {
         })
     }
 
-    // Cek panjang password dan enable/disable tombol
     private fun checkPasswords() {
         val oldPassword = binding.edtOldPassword.editText?.text.toString()
         val newPassword = binding.edtNewPassword.editText?.text.toString()
 
-        // Hanya enable tombol jika kedua password lebih dari 8 karakter
         binding.btnChangeProfile.isEnabled = oldPassword.length >= 8 && newPassword.length >= 8
+
+        if(!binding.btnChangeProfile.isEnabled){
+            binding.btnChangeProfile.setBackgroundColor(getColor(R.color.grey_primary))
+        }else{
+            binding.btnChangeProfile.setBackgroundColor(getColor(R.color.blue_primary))
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
