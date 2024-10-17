@@ -147,7 +147,7 @@ class AddOrderActivity : AppCompatActivity() {
                     is Result.Loading -> binding.progressBar.visibility = View.VISIBLE
                     is Result.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        showToast("Order successfully submitted")
+                        showToast("Permintaan Penjemputan Berhasil Dilakukan!")
                         finish()
                     }
                     is Result.Error -> {

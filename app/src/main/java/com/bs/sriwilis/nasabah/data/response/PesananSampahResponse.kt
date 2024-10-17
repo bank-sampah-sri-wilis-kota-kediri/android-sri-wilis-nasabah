@@ -14,6 +14,7 @@ data class DataKeranjang(
     val tanggal: String,
     val lat: String,
     val long: String,
+    val keterangan: String,
     val status_pesanan: String,
     val created_at: String,
     val updated_at: String,

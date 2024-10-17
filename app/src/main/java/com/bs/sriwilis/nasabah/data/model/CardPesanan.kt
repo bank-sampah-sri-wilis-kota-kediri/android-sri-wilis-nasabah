@@ -6,6 +6,7 @@ data class CardPesanan(
     val tanggal: String,
     val lat: String,
     val lng: String,
+    val keterangan: String?,
     val status_pesanan: String,
     val alamat_nasabah: String,
     val nama_nasabah: String,

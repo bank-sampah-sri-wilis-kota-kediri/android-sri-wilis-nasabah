@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -43,9 +44,12 @@ class PickUpAdapter(
                 }else if(pesanan.status_pesanan.lowercase() == "sudah dijadwalkan"){
                     tvStatus.text = "Diproses"
                     tvStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.blue_calm))
-                }else{
+                }else if(pesanan.status_pesanan == "Gagal"){
                     tvStatus.text = "Gagal"
                     tvStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.red_primary))
+                    tvAlasanPenolakan.visibility = View.VISIBLE
+                    tvLabelFailReason.visibility = View.VISIBLE
+                    tvAlasanPenolakan.text = pesanan?.keterangan
                 }
 
                 root.setOnClickListener {
@@ -105,7 +109,9 @@ class PickUpAdapter(
         return "$day $month $year"
     }
 
-
-
-
+    @SuppressLint("NotifyDataSetChanged")
+    fun updatePesanan(newPesanans: List<CardPesanan>) {
+        this.pesanans = newPesanans
+        notifyDataSetChanged()
+    }
 }

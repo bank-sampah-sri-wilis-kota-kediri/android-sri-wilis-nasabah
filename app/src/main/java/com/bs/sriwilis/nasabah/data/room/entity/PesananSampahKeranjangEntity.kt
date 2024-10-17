@@ -12,6 +12,7 @@ data class PesananSampahKeranjangEntity(
     val tanggal: String?,
     val lat: String?,
     val lng: String?,
+    val keterangan: String?,
     val status_pesanan: String?,
     val created_at: String?,
     val updated_at: String?

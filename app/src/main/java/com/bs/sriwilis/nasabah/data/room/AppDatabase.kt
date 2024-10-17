@@ -25,7 +25,7 @@ import com.bs.sriwilispetugas.data.room.dao.TransaksiSampahDao
 
 @Database(
     entities = [LoginResponseEntity::class, NasabahEntity::class, CategoryEntity::class, PenarikanEntity::class, PesananSampahKeranjangEntity::class, PesananSampahEntity::class, CatalogEntity::class, KeranjangTransaksiEntity::class, TransaksiSampahEntity::class],
-    version = 14,
+    version = 17,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

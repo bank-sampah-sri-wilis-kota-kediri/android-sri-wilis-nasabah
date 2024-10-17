@@ -107,7 +107,7 @@ class HomeFragment : Fragment() {
                     val doubleBalance = loggedAccount?.saldo_nasabah?.toDoubleOrNull() ?: 0.0
                     val intBalance = doubleBalance.toInt()
                     val formatter = DecimalFormat("#,###")
-                    val formattedBalance = "Rp " + formatter.format(intBalance)
+                    val formattedBalance = "Rp" + formatter.format(intBalance)
                     binding.tvBalance.text = formattedBalance
 
                     if (loggedAccount != null) {

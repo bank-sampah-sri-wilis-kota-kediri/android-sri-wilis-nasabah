@@ -18,6 +18,7 @@ class MappingPesanan {
                 tanggal = keranjang.tanggal,
                 lat = keranjang.lat,
                 lng = keranjang.long,
+                keterangan = keranjang.keterangan,
                 status_pesanan = keranjang.status_pesanan,
                 created_at = keranjang.created_at,
                 updated_at = keranjang.updated_at

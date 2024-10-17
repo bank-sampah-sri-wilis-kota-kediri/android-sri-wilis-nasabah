@@ -54,7 +54,6 @@ interface ApiServiceMain {
 
     // end of nasabah
 
-
     // category
 
     @GET("kategori/show-all")

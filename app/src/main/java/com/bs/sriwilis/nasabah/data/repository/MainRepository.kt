@@ -126,6 +126,8 @@ class MainRepository(
             if (response.isSuccessful) {
                 val responseBody = response.body() ?: return Result.Error("Response body is null")
 
+                Log.d("Body Pesanan", "$responseBody")
+
                 // Mapping dari DTO ke Entitas Room
                 val (keranjangEntities, sampahEntities) = mappingPesanan.mapPesananSampahApiResponseDtoToEntities(responseBody)
 
