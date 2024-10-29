@@ -9,6 +9,7 @@ import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilis.nasabah.helper.ResultAuth
 
 class AuthRepository(
     private val apiService: ApiServiceAuth,
@@ -35,21 +36,21 @@ class AuthRepository(
         }
     }
 
-    suspend fun register(name: String, address: String, phone: String, password: String): Result<RegisterResponseDTO> {
+    suspend fun register(name: String, address: String, phone: String, password: String): ResultAuth<RegisterResponseDTO> {
         return try {
             val response = apiService.register(name, address, phone, password)
             if (response.isSuccessful) {
                 val registerResponseDTO = response.body()
                 if (registerResponseDTO != null) {
-                    Result.Success(registerResponseDTO)
+                    ResultAuth.Success(registerResponseDTO)
                 } else {
-                    Result.Error("Empty Response Body")
+                    ResultAuth.Error(500,"Empty Response Body")
                 }
             } else {
-                Result.Error("Failed to Register: ${response.code()}")
+                ResultAuth.Error(500, "Failed to Register: ${response.code()}")
             }
         } catch (e: Exception) {
-            Result.Error("Error: ${e.message}")
+            ResultAuth.Error(500, "Error: ${e.message}")
         }
     }
 

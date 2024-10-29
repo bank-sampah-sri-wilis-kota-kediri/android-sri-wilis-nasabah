@@ -17,7 +17,7 @@ data class PesananSampahEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val id_pesanan_sampah_keranjang: String,
     val kategori: String?,
-    val berat_perkiraan: Int?,
+    val berat_perkiraan: Float?,
     val harga_perkiraan: String?,
     val gambar: String?,
     val created_at: String?,

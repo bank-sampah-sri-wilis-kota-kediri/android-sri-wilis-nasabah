@@ -54,7 +54,6 @@ class WelcomeActivity : AppCompatActivity() {
                 }
                 is Result.Error -> {
                     Log.d("error sync", result.error)
-                    Toast.makeText(this, result.error ?: "Error occurred", Toast.LENGTH_SHORT).show()
                     navigateToHome()
                 }
             }

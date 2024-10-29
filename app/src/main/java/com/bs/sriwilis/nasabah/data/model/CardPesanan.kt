@@ -11,7 +11,7 @@ data class CardPesanan(
     val alamat_nasabah: String,
     val nama_nasabah: String,
     val no_hp_nasabah: String,
-    val total_berat: Double
+    val total_berat: Float
 )
 
 data class CardTransaksi(
@@ -21,5 +21,5 @@ data class CardTransaksi(
     val alamat_nasabah: String,
     val nama_nasabah: String,
     val no_hp_nasabah: String,
-    val total_berat: Double
+    val total_berat: Float
 )

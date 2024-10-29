@@ -16,7 +16,7 @@ data class PesananSampahItem(
     val harga_perkiraan: Double,
 
     @field:SerializedName("berat_perkiraan")
-    val berat_perkiraan: Int? = null,
+    val berat_perkiraan: Float? = null,
 
     @field:SerializedName("kategori")
     val kategori: String? = null,

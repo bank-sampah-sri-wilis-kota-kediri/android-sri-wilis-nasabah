@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityRegisterBinding
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilis.nasabah.helper.ResultAuth
 import com.bs.sriwilis.nasabah.ui.HomepageActivity
 import com.bs.sriwilis.nasabah.ui.authorization.AuthViewModel
 import com.bs.sriwilis.nasabah.ui.authorization.login.LoginActivity
@@ -53,12 +54,17 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun register(name: String, phone: String, address: String, password: String) {
-        viewModel.register(name, address, phone, password)
-
         if (name.isEmpty() || phone.isEmpty() || address.isEmpty() || password.isEmpty()) {
             showToast(getString(R.string.tv_make_sure))
             return
         }
+
+        if (password.length < MIN_PASSWORD_LENGTH) {
+            showToast(getString(R.string.tv_password_too_short, MIN_PASSWORD_LENGTH))
+            return
+        }
+
+        viewModel.register(name, address, phone, password)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -148,6 +154,11 @@ class RegisterActivity : AppCompatActivity() {
 
         val isPasswordValid = !TextUtils.isEmpty(password) && password.length >= MIN_PASSWORD_LENGTH
 
+        if (!isPasswordValid) {
+            showToast(getString(R.string.tv_password_too_short, MIN_PASSWORD_LENGTH))
+        }
+
+
         binding.btnRegister.isEnabled = isPasswordValid
     }
 
@@ -159,11 +170,11 @@ class RegisterActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.registerResult.observe(this, Observer { result ->
             when (result) {
-                is Result.Loading -> {
+                is ResultAuth.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
 
-                is Result.Success -> {
+                is ResultAuth.Success -> {
                     binding.progressBar.visibility = View.GONE
                     AlertDialog.Builder(this).apply {
                         setTitle("Sukses")
@@ -178,11 +189,11 @@ class RegisterActivity : AppCompatActivity() {
                     }
                 }
 
-                is Result.Error -> {
+                is ResultAuth.Error -> {
                     binding.progressBar.visibility = View.GONE
                     AlertDialog.Builder(this).apply {
                         setTitle("Gagal!")
-                        setMessage("Pendaftaran Akun Nasabah Gagal. ${result.error}")
+                        setMessage("Pendaftaran Akun Nasabah Gagal. ${result.message}")
                         setPositiveButton("OK", null)
                         create()
                         show()

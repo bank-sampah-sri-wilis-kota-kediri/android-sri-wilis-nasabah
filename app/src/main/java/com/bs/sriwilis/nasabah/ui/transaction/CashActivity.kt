@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bs.sriwilis.nasabah.R
 import com.bs.sriwilis.nasabah.databinding.ActivityCashBinding
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilis.nasabah.helper.ResultAuth
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
 import kotlinx.coroutines.launch
 
@@ -83,10 +84,10 @@ class CashActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.penarikanResult.observe(this, Observer { result ->
             when (result) {
-                is Result.Loading -> {
+                is ResultAuth.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
-                is Result.Success -> {
+                is ResultAuth.Success -> {
                     lifecycleScope.launch {
                         viewModel.syncDataPenarikan()
                         binding.progressBar.visibility = View.GONE
@@ -101,11 +102,11 @@ class CashActivity : AppCompatActivity() {
                     }
 
                 }
-                is Result.Error -> {
+                is ResultAuth.Error -> {
                     binding.progressBar.visibility = View.GONE
                     AlertDialog.Builder(this).apply {
                         setTitle("Gagal!")
-                        setMessage("Penarikan uang gagal ditambahkan. ${result.error}")
+                        setMessage(result.message)
                         setPositiveButton("OK", null)
                         create()
                         show()

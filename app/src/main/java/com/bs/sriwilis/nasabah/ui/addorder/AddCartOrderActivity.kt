@@ -57,7 +57,7 @@ class AddCartOrderActivity : AppCompatActivity() {
     }
 
     private fun updatePrice() {
-        val weight = binding.edtWasteWeight.text.toString().toIntOrNull() ?: 0
+        val weight = binding.edtWasteWeight.text.toString().toFloatOrNull() ?: 0.0f
         val calculatedPrice = basePrice * weight
         binding.edtWastePrice.setText(calculatedPrice.toString())
     }
@@ -82,7 +82,7 @@ class AddCartOrderActivity : AppCompatActivity() {
 
     private fun saveCartTransaction() {
         val selectedCategory = binding.spinnerWasteCategory.selectedItem.toString()
-        val weight = binding.edtWasteWeight.text.toString().toIntOrNull() ?: 0
+        val weight = binding.edtWasteWeight.text.toString().toFloatOrNull() ?: 0.0f
         val price = binding.edtWastePrice.text.toString().toDoubleOrNull() ?: 0.0
         val encodedImage = cartImage?.let { encodeImageToBase64(it) }
 
@@ -101,7 +101,7 @@ class AddCartOrderActivity : AppCompatActivity() {
 
         cartTransactions.add(cartTransaction)
 
-        val totalWeight = cartTransactions.sumOf { it.berat_perkiraan }
+        val totalWeight = cartTransactions.map { it.berat_perkiraan }.sum()
         val totalPrice = cartTransactions.sumOf { it.harga_perkiraan }
 
         val intent = Intent().apply {

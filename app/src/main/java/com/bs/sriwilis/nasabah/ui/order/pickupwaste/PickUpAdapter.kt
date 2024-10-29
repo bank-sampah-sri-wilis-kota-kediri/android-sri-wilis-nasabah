@@ -30,8 +30,8 @@ class PickUpAdapter(
             with(binding) {
                 tvNomorWaPesanan.text = pesanan.no_hp_nasabah
                 tvTanggalPesanan.text = convertDateToText(pesanan.tanggal)
-                val totalBerat = "${pesanan.total_berat} Kg"
-                tvBeratTransaksi.text = totalBerat.toString()
+                val totalBerat = String.format("%.2f Kg", pesanan.total_berat)
+                tvBeratTransaksi.text = totalBerat
 
                 tvNamaPesanan.text = pesanan.nama_nasabah ?: "Nama tidak ditemukan"
 

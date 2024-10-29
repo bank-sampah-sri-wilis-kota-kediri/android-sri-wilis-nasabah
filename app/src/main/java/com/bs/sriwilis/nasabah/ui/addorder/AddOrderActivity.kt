@@ -35,7 +35,7 @@ class AddOrderActivity : AppCompatActivity() {
 
     private var lat: String? = null
     private var long: String? = null
-    private var totalWeight: Int = 0
+    private var totalWeight: Float = 0.0f
     private var totalPrice: Float = 0.0f
     private var cartItems = mutableListOf<CartOrder>()
 
@@ -69,13 +69,13 @@ class AddOrderActivity : AppCompatActivity() {
     }
 
     private fun calculateTotal(cartTransactions: List<CartOrder>) {
-        totalWeight = cartTransactions.sumOf { it.berat_perkiraan }
+        totalWeight = cartTransactions.map { it.berat_perkiraan }.sum()
         totalPrice = cartTransactions.sumOf { it.harga_perkiraan.toDouble() }.toFloat()
 
         Log.d("TotalCalculation", "Total weight: $totalWeight kg, Total price: Rp $totalPrice")
 
-        binding.tvWeightEstimation.text = "$totalWeight kg"
-        binding.tvPriceEstimation.text = "Rp $totalPrice"
+        binding.tvWeightEstimation.text = String.format("%.2f kg", totalWeight)
+        binding.tvPriceEstimation.text = String.format("Rp%.0f", totalPrice)
     }
 
     private fun setupRecyclerView() {

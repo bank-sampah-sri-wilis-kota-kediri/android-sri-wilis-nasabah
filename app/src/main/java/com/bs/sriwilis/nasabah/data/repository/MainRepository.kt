@@ -30,8 +30,11 @@ import com.bs.sriwilis.nasabah.data.room.entity.LoginResponseEntity
 import com.bs.sriwilis.nasabah.data.room.entity.NasabahEntity
 import com.bs.sriwilis.nasabah.data.room.entity.PenarikanEntity
 import com.bs.sriwilis.nasabah.helper.Result
+import com.bs.sriwilis.nasabah.helper.ResultAuth
 import com.bs.sriwilispetugas.data.room.KeranjangTransaksiEntity
 import com.bs.sriwilispetugas.data.room.PesananSampahKeranjangEntity
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -65,6 +68,11 @@ class MainRepository(
             Result.Error("Error: ${e.message}")
         }
     }
+
+    data class ErrorResponse(
+        val success: Boolean,
+        val message: String
+    )
 
     suspend fun logout() {
         val token = getToken() ?: ""
@@ -413,63 +421,78 @@ class MainRepository(
         }
     }
 
-    suspend fun addPenarikanCash(nominal: Long): Result<AddPenarikanDTO> {
+    suspend fun addPenarikanCash(nominal: Long): ResultAuth<AddPenarikanDTO> {
         return try {
             val no_hp_nasabah = getPhoneLoggedAccount()
-            val token = getToken() ?: return Result.Error("Token is null")
+            val token = getToken() ?: return ResultAuth.Error(401, "Token is null")
+
             val response = apiService.addPenarikanCash("Bearer $token", no_hp_nasabah, "Tunai", nominal)
+
             if (response.isSuccessful) {
                 val addPenarikanResponseDTO = response.body()
                 if (addPenarikanResponseDTO != null) {
-                    Result.Success(addPenarikanResponseDTO)
+                    ResultAuth.Success(addPenarikanResponseDTO)
                 } else {
-                    Result.Error("Empty Penarikan Body Response")
+                    ResultAuth.Error(response.code(), response.message())
                 }
             } else {
-                Result.Error("Failed to Add Penarikan: ${response.code()}")
+                val errorBodyString = response.errorBody()?.string()
+                Log.d("API_ERROR", "Error Body: $errorBodyString")
+
+                val errorResponse = parseErrorResponse(errorBodyString)
+                ResultAuth.Error(response.code(), errorResponse)
             }
         } catch (e: Exception) {
-            Result.Error("Error: ${e.message}")
+            ResultAuth.Error(500, "Error: ${e.message}")
         }
     }
 
-    suspend fun addPenarikanPLN(nominal: Long, nomorMeteran: Long): Result<AddPenarikanDTO> {
+
+    suspend fun addPenarikanPLN(nominal: Long, nomorMeteran: Long): ResultAuth<AddPenarikanDTO> {
         return try {
             val no_hp_nasabah = getPhoneLoggedAccount()
-            val token = getToken() ?: return Result.Error("Token is null")
+            val token = getToken() ?: return ResultAuth.Error(401, "Token is null")
+
             val response = apiService.addPenarikanPLN("Bearer $token", no_hp_nasabah, "PLN", nominal, nomorMeteran)
+
             if (response.isSuccessful) {
                 val addPenarikanResponseDTO = response.body()
                 if (addPenarikanResponseDTO != null) {
-                    Result.Success(addPenarikanResponseDTO)
+                    ResultAuth.Success(addPenarikanResponseDTO)
                 } else {
-                    Result.Error("Empty Penarikan Body Response")
+                    ResultAuth.Error(response.code(), response.message())
                 }
             } else {
-                Result.Error("Failed to Add Penarikan: ${response.code()}")
+                // Parsing the error message from response body
+                val errorResponse = parseErrorResponse(response.errorBody()?.string())
+                ResultAuth.Error(response.code(), errorResponse)
             }
         } catch (e: Exception) {
-            Result.Error("Error: ${e.message}")
+            ResultAuth.Error(500, "Error: ${e.message}")
         }
     }
 
-    suspend fun addPenarikanTransfer(nominal: Long, nomorRekening: Long, jenisBank: String): Result<AddPenarikanDTO> {
+    suspend fun addPenarikanTransfer(nominal: Long, nomorRekening: Long, jenisBank: String): ResultAuth<AddPenarikanDTO> {
         return try {
             val no_hp_nasabah = getPhoneLoggedAccount()
-            val token = getToken() ?: return Result.Error("Token is null")
+            val token = getToken() ?: return ResultAuth.Error(401, "Token is null")
+
             val response = apiService.addPenarikanTransfer("Bearer $token", no_hp_nasabah, "Transfer", nominal, nomorRekening, jenisBank)
+
             if (response.isSuccessful) {
                 val addPenarikanResponseDTO = response.body()
                 if (addPenarikanResponseDTO != null) {
-                    Result.Success(addPenarikanResponseDTO)
+                    ResultAuth.Success(addPenarikanResponseDTO)
                 } else {
-                    Result.Error("Empty Penarikan Body Response")
+                    ResultAuth.Error(response.code(), response.message())
                 }
             } else {
-                Result.Error("Failed to Add Penarikan: ${response.code()}")
+                // Parsing the error message from response body
+                val errorResponse = parseErrorResponse(response.errorBody()?.string())
+                ResultAuth.Error(response.code(), errorResponse)
             }
         } catch (e: Exception) {
-            Result.Error("Error: ${e.message}")
+            ResultAuth.Error(500, "Error: ${e.message}")
         }
     }
 
@@ -706,4 +729,13 @@ class MainRepository(
     }
 
     //end of catalog
+
+    private fun parseErrorResponse(errorBody: String?): String {
+        return try {
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            errorResponse?.message ?: "Unknown error"
+        } catch (e: JsonSyntaxException) {
+            errorBody ?: "Unknown error"
+        }
+    }
 }
