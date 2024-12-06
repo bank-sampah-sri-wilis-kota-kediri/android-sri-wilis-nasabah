@@ -39,6 +39,7 @@ class AddOrderActivity : AppCompatActivity() {
     private var totalPrice: Float = 0.0f
     private var cartItems = mutableListOf<CartOrder>()
 
+
     private lateinit var adapter: CartOrderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +82,14 @@ class AddOrderActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val recyclerView: RecyclerView = findViewById(R.id.rv_transaction_cart)
         val cartItems = mutableListOf<CartOrder>()
-        adapter = CartOrderAdapter(cartItems)
+        adapter = CartOrderAdapter(cartItems) { cartOrder ->
+            adapter.removeItem(cartOrder)
+            cartItems.remove(cartOrder)
+
+            calculateTotal(cartItems)
+            this.cartItems = cartItems
+        }
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
@@ -138,6 +146,7 @@ class AddOrderActivity : AppCompatActivity() {
     }
 
     private fun submitTransaction() {
+        Log.d("cartitem di submit cok", cartItems.toString())
         val lat = lat
         val long = long
         if (cartItems.isNotEmpty() && lat != null && long != null) {

@@ -53,36 +53,36 @@ class CatalogAdapter(
                     val shopeeLink = catalog?.shopee_link
                     if (!shopeeLink.isNullOrEmpty()) {
                         try {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(shopeeLink))
-
-                            if (intent.resolveActivity(itemView.context.packageManager) != null) {
-                                itemView.context.startActivity(intent)
+                            val formattedLink = if (shopeeLink.startsWith("http://") || shopeeLink.startsWith("https://")) {
+                                shopeeLink
                             } else {
-                                Toast.makeText(itemView.context, "No browser found to open the Shopee link", Toast.LENGTH_SHORT).show()
+                                "https://$shopeeLink"
                             }
+
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse(formattedLink)
+                            }
+
+                            itemView.context.startActivity(intent)
                         } catch (e: Exception) {
-                            Toast.makeText(itemView.context, "Error opening Shopee link: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(itemView.context, "Failed to open link: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     } else {
                         Toast.makeText(itemView.context, "No Shopee link available for this item", Toast.LENGTH_SHORT).show()
                     }
                 }
 
+
                 btnClickWa.setOnClickListener {
-                    val phoneNumber = catalog?.no_wa?.replace(Regex("[^1-9]"), "")
+                    val rawPhoneNumber = catalog?.no_wa
+                    val phoneNumber = normalizePhoneNumber(rawPhoneNumber)
                     val message = "Halo, Saya ingin memesan katalog sampah anda!"
 
                     if (!phoneNumber.isNullOrEmpty()) {
                         try {
-                            val uri = Uri.parse("https://wa.me/62$phoneNumber?text=" + Uri.encode(message))
+                            val uri = Uri.parse("https://wa.me/$phoneNumber?text=" + Uri.encode(message))
                             val intent = Intent(Intent.ACTION_VIEW, uri)
-                            try {
-                                itemView.context.packageManager.getPackageInfo("com.whatsapp", 0)
-                                itemView.context.startActivity(intent)
-                            } catch (e: PackageManager.NameNotFoundException) {
-                                Toast.makeText(itemView.context, "WhatsApp belum diinstall", Toast.LENGTH_SHORT).show()
-                            }
-
+                            itemView.context.startActivity(intent)
                         } catch (e: Exception) {
                             Toast.makeText(itemView.context, "Gagal membuka WhatsApp: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
@@ -90,8 +90,6 @@ class CatalogAdapter(
                         Toast.makeText(itemView.context, "Nomor WhatsApp tidak tersedia", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-
 
             }
         }
@@ -112,9 +110,32 @@ class CatalogAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateCatalog(newCatalog: List<Catalog?>) {
-        this.catalog = newCatalog
-        Log.d("CategoryAdapter", "Jumlah data category: ${catalog.size}")
+        val normalizedCatalog = normalizeAllPhoneNumbers(newCatalog)
+        this.catalog = normalizedCatalog
         notifyDataSetChanged()
     }
+
+
+    fun normalizePhoneNumber(phoneNumber: String?): String? {
+        if (phoneNumber.isNullOrEmpty()) return null
+
+        val cleanedNumber = phoneNumber.replace(Regex("[^0-9]"), "")
+
+        return if (cleanedNumber.startsWith("62")) {
+            "62" + cleanedNumber.removePrefix("62").removePrefix("62")
+        } else {
+            "62$cleanedNumber"
+        }
+    }
+
+    fun normalizeAllPhoneNumbers(catalogList: List<Catalog?>): List<Catalog?> {
+        return catalogList.map { catalog ->
+            catalog?.apply {
+                no_wa = normalizePhoneNumber(no_wa)
+            }
+        }
+    }
+
+
 
 }

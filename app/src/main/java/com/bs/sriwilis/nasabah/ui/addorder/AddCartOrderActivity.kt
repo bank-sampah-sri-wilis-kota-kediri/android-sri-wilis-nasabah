@@ -3,6 +3,7 @@ package com.bs.sriwilis.nasabah.ui.addorder
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.widget.addTextChangedListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bs.sriwilis.nasabah.R
@@ -22,6 +24,7 @@ import com.bs.sriwilis.nasabah.data.model.CartOrder
 import com.bs.sriwilis.nasabah.helper.Result
 import com.bs.sriwilis.nasabah.databinding.ActivityAddCartOrderBinding
 import com.bs.sriwilis.nasabah.utils.ViewModelFactory
+import java.io.File
 
 @Suppress("DEPRECATION")
 class AddCartOrderActivity : AppCompatActivity() {
@@ -30,6 +33,8 @@ class AddCartOrderActivity : AppCompatActivity() {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var spinner: Spinner
+
+    private lateinit var photoUri: Uri
 
     private var cartTransactions = mutableListOf<CartOrder>()
     private var selectedCategory: String? = null
@@ -64,22 +69,38 @@ class AddCartOrderActivity : AppCompatActivity() {
 
 
     private fun openCamera() {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, REQUEST_CAMERA)
-    }
+        try {
+            val photoFile = createImageFile()
+            photoUri = FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.fileprovider",
+                photoFile
+            )
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
-            val photo: Bitmap? = data?.extras?.get("data") as? Bitmap
-            if (photo != null) {
-                cartImage = photo
-                binding.ivCatalogPreview.setImageBitmap(photo)
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
             }
+
+            startActivityForResult(cameraIntent, REQUEST_CAMERA)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to open camera: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
+    private fun createImageFile(): File {
+        val timeStamp = System.currentTimeMillis().toString()
+        val storageDir = getExternalFilesDir(null)
+        return File.createTempFile("IMG_$timeStamp", ".jpg", storageDir)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
+            binding.ivCatalogPreview.setImageURI(photoUri)
+        } else {
+            Toast.makeText(this, "Photo capture cancelled", Toast.LENGTH_SHORT).show()
+        }
+    }
     private fun saveCartTransaction() {
         val selectedCategory = binding.spinnerWasteCategory.selectedItem.toString()
         val weight = binding.edtWasteWeight.text.toString().toFloatOrNull() ?: 0.0f
@@ -96,18 +117,20 @@ class AddCartOrderActivity : AppCompatActivity() {
             kategori = selectedCategory,
             berat_perkiraan = weight,
             harga_perkiraan = price,
-            gambar = encodedImage
+            gambar = photoUri.toString()
         )
 
         cartTransactions.add(cartTransaction)
 
         val totalWeight = cartTransactions.map { it.berat_perkiraan }.sum()
         val totalPrice = cartTransactions.sumOf { it.harga_perkiraan }
+        val imageUri = cartTransaction.gambar
 
         val intent = Intent().apply {
             putParcelableArrayListExtra("transaksi_sampah", ArrayList(cartTransactions))
             putExtra("total_weight", totalWeight)
             putExtra("total_price", totalPrice)
+            putExtra("image_uri", imageUri)
         }
         setResult(Activity.RESULT_OK, intent)
         finish()
